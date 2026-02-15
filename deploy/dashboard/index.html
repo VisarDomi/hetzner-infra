@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>veron3 builds</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a0f;
+    color: #e4e4e7;
+    min-height: 100vh;
+    padding: 48px 24px;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  header .left h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  header .left h1 span { color: #6366f1; }
+
+  header .left p {
+    color: #71717a;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  header .right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .refresh-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #52525b;
+  }
+
+  .refresh-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  header .right a {
+    font-size: 12px;
+    color: #a1a1aa;
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1px solid #27272a;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+
+  header .right a:hover {
+    border-color: #3f3f46;
+    color: #e4e4e7;
+    background: #18181b;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+
+  .card {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 3px solid #3f3f46;
+    transition: all 0.2s;
+  }
+
+  .card:hover {
+    border-color: #3f3f46;
+    background: #1c1c22;
+  }
+
+  .card.success { border-left-color: #22c55e; }
+  .card.failure { border-left-color: #ef4444; }
+  .card.none { border-left-color: #3f3f46; opacity: 0.5; }
+
+  .card-project {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    margin-bottom: 10px;
+  }
+
+  .card-status {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  .card-status.success { background: #052e16; color: #4ade80; }
+  .card-status.failure { background: #450a0a; color: #fca5a5; }
+  .card-status.none { background: #1c1917; color: #78716c; }
+
+  .card-details {
+    font-size: 12px;
+    color: #71717a;
+    line-height: 1.6;
+  }
+
+  .card-details .sha {
+    font-family: 'SF Mono', Consolas, monospace;
+    color: #a1a1aa;
+    font-size: 11px;
+  }
+
+  .card-details .message {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: #a1a1aa;
+  }
+
+  .card-details .time {
+    color: #52525b;
+  }
+
+  h2.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #a1a1aa;
+    margin-bottom: 16px;
+    letter-spacing: -0.2px;
+  }
+
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .history-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #52525b;
+    padding: 8px 12px;
+    border-bottom: 1px solid #27272a;
+  }
+
+  .history-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #18181b;
+    color: #a1a1aa;
+  }
+
+  .history-table tr:hover td {
+    background: #18181b;
+  }
+
+  .history-table .project-name {
+    font-weight: 600;
+    color: #e4e4e7;
+  }
+
+  .history-table .sha {
+    font-family: 'SF Mono', Consolas, monospace;
+    font-size: 11px;
+    color: #71717a;
+  }
+
+  .history-table .msg {
+    max-width: 340px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .history-table .duration {
+    font-family: 'SF Mono', Consolas, monospace;
+    font-size: 11px;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .status-dot.success { background: #22c55e; }
+  .status-dot.failure { background: #ef4444; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: #3f3f46;
+    font-size: 14px;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 48px;
+    color: #27272a;
+    font-size: 11px;
+  }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    header { flex-direction: column; align-items: flex-start; }
+    .history-table .msg { max-width: 160px; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="left">
+        <h1><span>veron3</span> builds</h1>
+        <p>Deploy status across all projects</p>
+      </div>
+      <div class="right">
+        <div class="refresh-indicator">
+          <div class="refresh-dot"></div>
+          <span>30s</span>
+        </div>
+        <a href="https://veron3.space">Portal</a>
+        <a href="https://pm.veron3.space">Plane</a>
+        <a href="https://status.veron3.space">Status</a>
+      </div>
+    </header>
+
+    <div id="cards" class="grid"></div>
+
+    <h2 class="section-title">Build history</h2>
+    <div id="history"></div>
+
+    <footer>veron3.space &middot; auto-deploy from main</footer>
+  </div>
+
+<script>
+const PROJECTS = ['lifevault', 'ordretten', 'roni', 'ura', 'trader-ui'];
+const REFRESH_MS = 30000;
+
+function relativeTime(ts) {
+  const diff = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+  if (diff < 60) return diff + 's ago';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  const days = Math.floor(diff / 86400);
+  return days === 1 ? '1d ago' : days + 'd ago';
+}
+
+function formatDuration(sec) {
+  if (sec < 60) return sec + 's';
+  return Math.floor(sec / 60) + 'm ' + (sec % 60) + 's';
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function parseJsonl(text) {
+  return text.trim().split('\n').filter(Boolean).map(line => {
+    try { return JSON.parse(line); }
+    catch { return null; }
+  }).filter(Boolean);
+}
+
+function renderCards(builds) {
+  const latest = {};
+  for (const b of builds) {
+    if (!latest[b.project] || new Date(b.timestamp) > new Date(latest[b.project].timestamp)) {
+      latest[b.project] = b;
+    }
+  }
+
+  return PROJECTS.map(p => {
+    const b = latest[p];
+    if (!b) {
+      return `<div class="card none">
+        <div class="card-project">${escapeHtml(p)}</div>
+        <span class="card-status none">No builds</span>
+      </div>`;
+    }
+    return `<div class="card ${b.status}">
+      <div class="card-project">${escapeHtml(b.project)}</div>
+      <span class="card-status ${b.status}">${b.status}</span>
+      <div class="card-details">
+        <div><span class="sha">${escapeHtml(b.sha)}</span> &middot; ${formatDuration(b.duration)}</div>
+        <div class="message">${escapeHtml(b.message)}</div>
+        <div class="time">${relativeTime(b.timestamp)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderHistory(builds) {
+  const sorted = builds.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 50);
+  if (sorted.length === 0) {
+    return '<div class="empty-state">No builds recorded yet. Push to main to trigger a deploy.</div>';
+  }
+  const rows = sorted.map(b =>
+    `<tr>
+      <td><span class="status-dot ${b.status}"></span>${relativeTime(b.timestamp)}</td>
+      <td class="project-name">${escapeHtml(b.project)}</td>
+      <td><span class="sha">${escapeHtml(b.sha)}</span></td>
+      <td class="msg" title="${escapeHtml(b.message)}">${escapeHtml(b.message)}</td>
+      <td class="duration">${formatDuration(b.duration)}</td>
+    </tr>`
+  ).join('');
+
+  return `<table class="history-table">
+    <thead><tr>
+      <th>Time</th><th>Project</th><th>SHA</th><th>Message</th><th>Duration</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+async function refresh() {
+  try {
+    const res = await fetch('builds.jsonl?t=' + Date.now());
+    if (!res.ok) { return; }
+    const text = await res.text();
+    const builds = parseJsonl(text);
+    document.getElementById('cards').innerHTML = renderCards(builds);
+    document.getElementById('history').innerHTML = renderHistory(builds);
+  } catch (e) {
+    // silently retry on next cycle
+  }
+}
+
+refresh();
+setInterval(refresh, REFRESH_MS);
+</script>
+</body>
+</html>

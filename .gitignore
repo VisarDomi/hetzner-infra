@@ -1,0 +1,4 @@
+# Deploy runtime state
+deploy/.state/
+deploy/.cache/
+deploy/logs/
