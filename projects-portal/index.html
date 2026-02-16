@@ -2,124 +2,131 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<base target="_blank">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>veron3 — Projects</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: #0a0a0f;
-    color: #e4e4e7;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: #09090b;
+    color: #fafafa;
     min-height: 100vh;
-    padding: 48px 24px;
+    padding: 60px 24px;
+    -webkit-font-smoothing: antialiased;
   }
 
   .container {
-    max-width: 1100px;
+    max-width: 1000px;
     margin: 0 auto;
   }
 
+  /* Header */
   header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 40px;
-    flex-wrap: wrap;
-    gap: 16px;
+    margin-bottom: 56px;
   }
 
-  header .left h1 {
-    font-size: 24px;
+  .logo {
+    font-size: 20px;
     font-weight: 700;
     letter-spacing: -0.5px;
+    color: #fafafa;
   }
 
-  header .left h1 span { color: #6366f1; }
+  .logo span { color: #818cf8; }
 
-  header .left p {
-    color: #71717a;
-    font-size: 13px;
-    margin-top: 4px;
+
+  .subtitle {
+    color: #52525b;
+    font-size: 14px;
+    margin-top: 8px;
   }
 
-  header .right {
-    display: flex;
-    gap: 8px;
+  /* Section labels */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #3f3f46;
+    margin-bottom: 16px;
+    padding-left: 2px;
   }
 
-  header .right a {
-    font-size: 12px;
-    color: #a1a1aa;
-    text-decoration: none;
-    padding: 6px 12px;
-    border: 1px solid #27272a;
-    border-radius: 6px;
-    transition: all 0.15s;
-  }
+  .section + .section { margin-top: 40px; }
 
-  header .right a:hover {
-    border-color: #3f3f46;
-    color: #e4e4e7;
-    background: #18181b;
-  }
-
+  /* Cards */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
   }
 
   .card {
-    background: #18181b;
-    border: 1px solid #27272a;
-    border-radius: 12px;
-    padding: 24px;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.2s;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    background: #111113;
+    border: 1px solid #1e1e22;
+    border-radius: 14px;
+    padding: 22px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
   }
 
-  .card:hover {
-    border-color: #3f3f46;
-    background: #1c1c22;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  }
-
-  .card.disabled {
-    opacity: 0.45;
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    opacity: 0;
+    background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(129,140,248,0.04), transparent 40%);
+    transition: opacity 0.3s;
     pointer-events: none;
   }
 
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  .card:hover::before { opacity: 1; }
+
+  .card:hover {
+    border-color: #27272a;
+    background: #141416;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   }
 
-  .card-emoji {
-    font-size: 28px;
-    width: 44px;
-    height: 44px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
+  .card.muted {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .icon {
+    font-size: 24px;
+    width: 42px;
+    height: 42px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
   }
 
-  .card-title {
-    flex: 1;
-    min-width: 0;
-  }
+  .card-info { flex: 1; min-width: 0; }
 
-  .card-title h2 {
-    font-size: 16px;
+  .card-info h2 {
+    font-size: 15px;
     font-weight: 600;
     letter-spacing: -0.2px;
     white-space: nowrap;
@@ -127,253 +134,302 @@
     text-overflow: ellipsis;
   }
 
-  .card-title .identifier {
+  .card-info .mono {
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
     font-size: 11px;
-    color: #52525b;
-    font-family: 'SF Mono', Consolas, monospace;
+    color: #3f3f46;
     margin-top: 2px;
   }
 
-  .card p.desc {
+  .card p {
     font-size: 13px;
-    color: #a1a1aa;
-    line-height: 1.5;
+    color: #71717a;
+    line-height: 1.55;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
-  .card-footer {
+  .card-bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: auto;
-    padding-top: 8px;
+    padding-top: 6px;
   }
 
-  .badge {
-    display: inline-block;
+  .tag {
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 3px 8px;
-    border-radius: 4px;
+    letter-spacing: 0.6px;
+    padding: 3px 9px;
+    border-radius: 6px;
   }
 
-  .badge-live { background: #052e16; color: #4ade80; }
-  .badge-dev { background: #172554; color: #60a5fa; }
-  .badge-idea { background: #1c1917; color: #78716c; }
-
-  .members {
-    display: flex;
-    gap: -4px;
-  }
-
-  .member-dot {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    font-weight: 700;
-    border: 2px solid #18181b;
-    margin-left: -4px;
-  }
-
-  .member-dot:first-child { margin-left: 0; }
+  .tag-live { background: rgba(74,222,128,0.1); color: #4ade80; }
+  .tag-dev  { background: rgba(96,165,250,0.1); color: #60a5fa; }
+  .tag-idea { background: rgba(161,161,170,0.06); color: #52525b; }
 
   .domain {
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
     font-size: 11px;
-    color: #52525b;
-    font-family: 'SF Mono', Consolas, monospace;
+    color: #3f3f46;
   }
 
+  /* Footer */
   footer {
     text-align: center;
-    margin-top: 48px;
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid #18181b;
     color: #27272a;
-    font-size: 11px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
   }
 
   @media (max-width: 480px) {
+    body { padding: 32px 16px; }
     .grid { grid-template-columns: 1fr; }
-    header { flex-direction: column; align-items: flex-start; }
   }
 </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="left">
-        <h1><span>veron3</span>.space</h1>
-        <p>Projects &mdash; Hetzner NBG1</p>
-      </div>
-      <div class="right">
-        <a href="https://pm.veron3.space">Plane</a>
-        <a href="https://studio.veron3.space">Supabase</a>
-        <a href="https://chat.veron3.space">Chat</a>
-      </div>
+      <div class="logo"><span>veron3</span>.space</div>
+      <p class="subtitle">Projects — Hetzner NBG1</p>
     </header>
 
-    <div class="grid">
+    <div class="section">
+      <div class="section-label">Live</div>
+      <div class="grid">
 
-      <a href="https://vault.veron3.space" class="card">
-        <div class="card-header">
-          <div class="card-emoji">&#128196;</div>
-          <div class="card-title">
-            <h2>Life Document Organizer</h2>
-            <div class="identifier">LIFEDOCUME</div>
+        <a href="https://vault.veron3.space" class="card">
+          <div class="card-top">
+            <div class="icon">&#128196;</div>
+            <div class="card-info">
+              <h2>Life Document Organizer</h2>
+              <div class="mono">LIFEDOCUME</div>
+            </div>
           </div>
-        </div>
-        <p class="desc">AI-powered document vault. Consult hidden clauses in contracts, use as a one-stop shop for legal documents.</p>
-        <div class="card-footer">
-          <span class="badge badge-live">Live</span>
-          <span class="domain">vault.veron3.space</span>
-        </div>
-      </a>
-
-      <a href="https://roni.veron3.space" class="card">
-        <div class="card-header">
-          <div class="card-emoji">&#8986;</div>
-          <div class="card-title">
-            <h2>Job Application Helper</h2>
-            <div class="identifier">JOBAPPLICA</div>
+          <p>AI-powered document vault. Consult hidden clauses in contracts, use as a one-stop shop for legal documents.</p>
+          <div class="card-bottom">
+            <span class="tag tag-live">Live</span>
+            <span class="domain">vault.veron3.space</span>
           </div>
-        </div>
-        <p class="desc">Claude Code-driven job search: CV adaptation, web scraping, MCP for DB interaction, and a web UI for pipeline management.</p>
-        <div class="card-footer">
-          <span class="badge badge-live">Live</span>
-          <span class="domain">roni.veron3.space</span>
-        </div>
-      </a>
+        </a>
 
-      <a href="https://ura.veron3.space" class="card">
-        <div class="card-header">
-          <div class="card-emoji">&#128076;</div>
-          <div class="card-title">
-            <h2>Ura</h2>
-            <div class="identifier">URA</div>
+        <a href="https://roni.veron3.space" class="card">
+          <div class="card-top">
+            <div class="icon">&#8986;</div>
+            <div class="card-info">
+              <h2>Job Application Helper</h2>
+              <div class="mono">JOBAPPLICA</div>
+            </div>
           </div>
-        </div>
-        <p class="desc">Humanitarian platform connecting people in need with organizations offering charity goods and services via vouchers.</p>
-        <div class="card-footer">
-          <span class="badge badge-live">Live</span>
-          <span class="domain">ura.veron3.space</span>
-        </div>
-      </a>
-
-      <a href="#" class="card disabled">
-        <div class="card-header">
-          <div class="card-emoji">&#128202;</div>
-          <div class="card-title">
-            <h2>Agent Trading Marketplace</h2>
-            <div class="identifier">AGENTTRADI</div>
+          <p>Claude Code-driven job search: CV adaptation, web scraping, MCP for DB interaction, and a web UI for pipeline management.</p>
+          <div class="card-bottom">
+            <span class="tag tag-live">Live</span>
+            <span class="domain">roni.veron3.space</span>
           </div>
-        </div>
-        <p class="desc">Hire different LLM agents based on secret sauce strategies. Each agent is a Claude Code instance performing trades via MCP.</p>
-        <div class="card-footer">
-          <span class="badge badge-dev">In Dev</span>
-          <span class="domain">&mdash;</span>
-        </div>
-      </a>
+        </a>
 
-      <a href="#" class="card disabled">
-        <div class="card-header">
-          <div class="card-emoji">&#128185;</div>
-          <div class="card-title">
-            <h2>Tendies Trader</h2>
-            <div class="identifier">TENDIESTRA</div>
+        <a href="https://ura.veron3.space" class="card">
+          <div class="card-top">
+            <div class="icon">&#128076;</div>
+            <div class="card-info">
+              <h2>Ura</h2>
+              <div class="mono">URA</div>
+            </div>
           </div>
-        </div>
-        <p class="desc">A simplified way to gamble with leverage.</p>
-        <div class="card-footer">
-          <span class="badge badge-dev">In Dev</span>
-          <span class="domain">&mdash;</span>
-        </div>
-      </a>
-
-      <a href="#" class="card disabled">
-        <div class="card-header">
-          <div class="card-emoji">&#127891;</div>
-          <div class="card-title">
-            <h2>Agentic Marketing</h2>
-            <div class="identifier">AGENTICMAR</div>
+          <p>Humanitarian platform connecting people in need with organizations offering charity goods and services via vouchers.</p>
+          <div class="card-bottom">
+            <span class="tag tag-live">Live</span>
+            <span class="domain">ura.veron3.space</span>
           </div>
-        </div>
-        <p class="desc">End-to-end machinery to draft, create, and post multimedia content on social sites for app launches.</p>
-        <div class="card-footer">
-          <span class="badge badge-idea">Idea</span>
-          <span class="domain">&mdash;</span>
-        </div>
-      </a>
+        </a>
 
-      <a href="#" class="card disabled">
-        <div class="card-header">
-          <div class="card-emoji">&#128478;&#65039;</div>
-          <div class="card-title">
-            <h2>Astro News Albania</h2>
-            <div class="identifier">ASTRONEWSA</div>
-          </div>
-        </div>
-        <p class="desc">Claude-managed Albanian news site. Astro static site with AI-generated content for targeted traffic.</p>
-        <div class="card-footer">
-          <span class="badge badge-idea">Idea</span>
-          <span class="domain">blog.veron3.space</span>
-        </div>
-      </a>
-
-      <a href="#" class="card disabled">
-        <div class="card-header">
-          <div class="card-emoji">&#127472;&#127479;</div>
-          <div class="card-title">
-            <h2>Korean Flip Cards</h2>
-            <div class="identifier">KOREANFLIP</div>
-          </div>
-        </div>
-        <p class="desc">Language learning app for Korean with spaced repetition flip cards.</p>
-        <div class="card-footer">
-          <span class="badge badge-idea">Idea</span>
-          <span class="domain">&mdash;</span>
-        </div>
-      </a>
-
-      <a href="#" class="card disabled">
-        <div class="card-header">
-          <div class="card-emoji">&#128444;&#65039;</div>
-          <div class="card-title">
-            <h2>AR Painting Visualizer</h2>
-            <div class="identifier">ARPAINTING</div>
-          </div>
-        </div>
-        <p class="desc">Load up a painting catalogue and visualize art on your walls. iOS app.</p>
-        <div class="card-footer">
-          <span class="badge badge-idea">Idea</span>
-          <span class="domain">&mdash;</span>
-        </div>
-      </a>
-
-      <a href="#" class="card disabled">
-        <div class="card-header">
-          <div class="card-emoji">&#127835;</div>
-          <div class="card-title">
-            <h2>Delicat</h2>
-            <div class="identifier">DELICAT</div>
-          </div>
-        </div>
-        <p class="desc">Catalogue the delicacies you know how to cook. Flutter app.</p>
-        <div class="card-footer">
-          <span class="badge badge-idea">Idea</span>
-          <span class="domain">&mdash;</span>
-        </div>
-      </a>
-
+      </div>
     </div>
 
-    <footer>veron3.space &middot; Hetzner NBG1 &middot; Ubuntu 24.04</footer>
+    <div class="section">
+      <div class="section-label">Infrastructure</div>
+      <div class="grid">
+
+        <a href="https://pm.veron3.space" class="card">
+          <div class="card-top">
+            <div class="icon">&#9992;&#65039;</div>
+            <div class="card-info">
+              <h2>Plane</h2>
+              <div class="mono">Project Management</div>
+            </div>
+          </div>
+          <p>Issue tracking, sprints, and project management across all veron3 projects.</p>
+          <div class="card-bottom">
+            <span class="tag tag-live">Live</span>
+            <span class="domain">pm.veron3.space</span>
+          </div>
+        </a>
+
+        <a href="https://studio.veron3.space" class="card">
+          <div class="card-top">
+            <div class="icon">&#9889;</div>
+            <div class="card-info">
+              <h2>Supabase</h2>
+              <div class="mono">Database</div>
+            </div>
+          </div>
+          <p>Self-hosted Supabase instance. Postgres, auth, and storage for all projects.</p>
+          <div class="card-bottom">
+            <span class="tag tag-live">Live</span>
+            <span class="domain">studio.veron3.space</span>
+          </div>
+        </a>
+
+        <a href="https://chat.veron3.space" class="card">
+          <div class="card-top">
+            <div class="icon">&#128172;</div>
+            <div class="card-info">
+              <h2>Chat</h2>
+              <div class="mono">Messaging</div>
+            </div>
+          </div>
+          <p>Matrix-based chat for project communication and notifications.</p>
+          <div class="card-bottom">
+            <span class="tag tag-live">Live</span>
+            <span class="domain">chat.veron3.space</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">In Development</div>
+      <div class="grid">
+
+        <a href="#" class="card">
+          <div class="card-top">
+            <div class="icon">&#128202;</div>
+            <div class="card-info">
+              <h2>Agent Trading Marketplace</h2>
+              <div class="mono">AGENTTRADI</div>
+            </div>
+          </div>
+          <p>Hire different LLM agents based on secret sauce strategies. Each agent is a Claude Code instance performing trades via MCP.</p>
+          <div class="card-bottom">
+            <span class="tag tag-dev">In Dev</span>
+          </div>
+        </a>
+
+        <a href="#" class="card">
+          <div class="card-top">
+            <div class="icon">&#128185;</div>
+            <div class="card-info">
+              <h2>Tendies Trader</h2>
+              <div class="mono">TENDIESTRA</div>
+            </div>
+          </div>
+          <p>A simplified way to gamble with leverage.</p>
+          <div class="card-bottom">
+            <span class="tag tag-dev">In Dev</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Ideas</div>
+      <div class="grid">
+
+        <a href="#" class="card">
+          <div class="card-top">
+            <div class="icon">&#127891;</div>
+            <div class="card-info">
+              <h2>Agentic Marketing</h2>
+              <div class="mono">AGENTICMAR</div>
+            </div>
+          </div>
+          <p>End-to-end machinery to draft, create, and post multimedia content on social sites for app launches.</p>
+          <div class="card-bottom">
+            <span class="tag tag-idea">Idea</span>
+          </div>
+        </a>
+
+        <a href="#" class="card">
+          <div class="card-top">
+            <div class="icon">&#128478;&#65039;</div>
+            <div class="card-info">
+              <h2>Astro News Albania</h2>
+              <div class="mono">ASTRONEWSA</div>
+            </div>
+          </div>
+          <p>Claude-managed Albanian news site. Astro static site with AI-generated content for targeted traffic.</p>
+          <div class="card-bottom">
+            <span class="tag tag-idea">Idea</span>
+            <span class="domain">blog.veron3.space</span>
+          </div>
+        </a>
+
+        <a href="#" class="card">
+          <div class="card-top">
+            <div class="icon">&#127472;&#127479;</div>
+            <div class="card-info">
+              <h2>Korean Flip Cards</h2>
+              <div class="mono">KOREANFLIP</div>
+            </div>
+          </div>
+          <p>Language learning app for Korean with spaced repetition flip cards.</p>
+          <div class="card-bottom">
+            <span class="tag tag-idea">Idea</span>
+          </div>
+        </a>
+
+        <a href="#" class="card">
+          <div class="card-top">
+            <div class="icon">&#128444;&#65039;</div>
+            <div class="card-info">
+              <h2>AR Painting Visualizer</h2>
+              <div class="mono">ARPAINTING</div>
+            </div>
+          </div>
+          <p>Load up a painting catalogue and visualize art on your walls. iOS app.</p>
+          <div class="card-bottom">
+            <span class="tag tag-idea">Idea</span>
+          </div>
+        </a>
+
+        <a href="#" class="card">
+          <div class="card-top">
+            <div class="icon">&#127835;</div>
+            <div class="card-info">
+              <h2>Delicat</h2>
+              <div class="mono">DELICAT</div>
+            </div>
+          </div>
+          <p>Catalogue the delicacies you know how to cook. Flutter app.</p>
+          <div class="card-bottom">
+            <span class="tag tag-idea">Idea</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <footer>veron3.space &middot; NBG1 &middot; Ubuntu 24.04</footer>
   </div>
+
+  <script>
+    document.querySelectorAll('.card:not(.muted)').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--x', (e.clientX - r.left) + 'px');
+        card.style.setProperty('--y', (e.clientY - r.top) + 'px');
+      });
+    });
+  </script>
 </body>
 </html>
