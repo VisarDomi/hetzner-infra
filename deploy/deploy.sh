@@ -46,6 +46,7 @@ declare -A REPO_DIRS=(
     [visar]="visar-dev-site"
     [biomorph]="biomorph-website"
     [cashback]="cashback"
+    [cashback-deck]="cashback-deck"
 )
 
 declare -A SERVER_PATHS=(
@@ -59,6 +60,7 @@ declare -A SERVER_PATHS=(
     [visar]="/home/erdal/visar"
     [biomorph]="/home/erdal/biomorph"
     [cashback]="/home/erdal/cashback"
+    [cashback-deck]="/home/erdal/cashback-deck"
 )
 
 declare -A DEPLOY_TYPES=(
@@ -72,6 +74,7 @@ declare -A DEPLOY_TYPES=(
     [visar]="node"
     [biomorph]="static"
     [cashback]="static"
+    [cashback-deck]="static"
 )
 
 declare -A INSTALL_CMDS=(
@@ -85,6 +88,7 @@ declare -A INSTALL_CMDS=(
     [visar]="npm ci"
     [biomorph]="npm install"
     [cashback]="npm ci"
+    [cashback-deck]="npm ci"
 )
 
 declare -A BUILD_CMDS=(
@@ -98,6 +102,7 @@ declare -A BUILD_CMDS=(
     [visar]="npm run build && python3 -m weasyprint static/cv.html build/client/visar-domi-cv.pdf"
     [biomorph]="npm run build"
     [cashback]="npm run build"
+    [cashback-deck]="npm run build"
 )
 
 # Path to the build output directory (relative to the extracted source root)
@@ -112,6 +117,7 @@ declare -A BUILD_OUTPUTS=(
     [visar]="build"
     [biomorph]="dist"
     [cashback]="dist"
+    [cashback-deck]="dist"
 )
 
 # Systemd service name (node deploy type only, leave empty for static)
@@ -126,6 +132,7 @@ declare -A SERVICE_NAMES=(
     [visar]="visar"
     [biomorph]=""
     [cashback]=""
+    [cashback-deck]=""
 )
 
 # Env file to copy from working dir before build (leave empty if not needed)
@@ -140,6 +147,7 @@ declare -A ENV_FILES=(
     [visar]=""
     [biomorph]=""
     [cashback]=""
+    [cashback-deck]=""
 )
 
 # =============================================================================
