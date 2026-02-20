@@ -42,6 +42,7 @@ declare -A REPO_DIRS=(
     [ura]="ura"
 
     [trader-ui]="trader-ui"
+    [tendies]="trader-svelte"
     [visar]="visar-dev-site"
     [biomorph]="biomorph-website"
     [cashback]="cashback"
@@ -54,6 +55,7 @@ declare -A SERVER_PATHS=(
     [ura]="/home/erdal/ura"
 
     [trader-ui]="/home/erdal/trader-ui"
+    [tendies]="/home/erdal/tendies"
     [visar]="/home/erdal/visar"
     [biomorph]="/home/erdal/biomorph"
     [cashback]="/home/erdal/cashback"
@@ -66,6 +68,7 @@ declare -A DEPLOY_TYPES=(
     [ura]="static"
 
     [trader-ui]="node"
+    [tendies]="node"
     [visar]="node"
     [biomorph]="static"
     [cashback]="static"
@@ -78,6 +81,7 @@ declare -A INSTALL_CMDS=(
     [ura]="npm ci"
 
     [trader-ui]="npm ci"
+    [tendies]="npm ci"
     [visar]="npm ci"
     [biomorph]="npm install"
     [cashback]="npm ci"
@@ -90,6 +94,7 @@ declare -A BUILD_CMDS=(
     [ura]="npx ng build"
 
     [trader-ui]="npm run build"
+    [tendies]="npm run build"
     [visar]="npm run build && python3 -m weasyprint static/cv.html build/client/visar-domi-cv.pdf"
     [biomorph]="npm run build"
     [cashback]="npm run build"
@@ -103,6 +108,7 @@ declare -A BUILD_OUTPUTS=(
     [ura]="preview/browser"
 
     [trader-ui]="build"
+    [tendies]="build"
     [visar]="build"
     [biomorph]="dist"
     [cashback]="dist"
@@ -116,6 +122,7 @@ declare -A SERVICE_NAMES=(
     [ura]=""
 
     [trader-ui]="trader-ui"
+    [tendies]="tendies"
     [visar]="visar"
     [biomorph]=""
     [cashback]=""
@@ -129,6 +136,7 @@ declare -A ENV_FILES=(
     [ura]=""
 
     [trader-ui]=".env"
+    [tendies]=".env"
     [visar]=""
     [biomorph]=""
     [cashback]=""
