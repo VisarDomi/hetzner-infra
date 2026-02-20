@@ -80,7 +80,7 @@ declare -A INSTALL_CMDS=(
     [trader-ui]="npm ci"
     [visar]="npm ci"
     [biomorph]="npm install"
-    [cashback]="true"
+    [cashback]="npm ci"
 )
 
 declare -A BUILD_CMDS=(
