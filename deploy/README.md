@@ -128,6 +128,17 @@ The watcher will immediately detect the new project has no deployed SHA and depl
 ./deploy/status.sh
 ```
 
+## Repos outside the workspace
+
+Some projects live outside the deploy workspace (`/home/visar/Documents/wip/hetzner/`). These need symlinks so the deploy script can find them. After cloning on a fresh machine, recreate these:
+
+```bash
+ln -s /home/visar/Documents/trading-repos/trader-ui /home/visar/Documents/wip/hetzner/trader-ui
+ln -s /home/visar/Documents/trading-repos/trader-svelte /home/visar/Documents/wip/hetzner/trader-svelte
+```
+
+If a project's `REPO_DIRS` entry points to a directory that doesn't exist directly under the workspace, check whether it lives in another repo directory (e.g. `trading-repos/`, `manga-repos/`) and create a symlink.
+
 ## How it works
 
 ```
