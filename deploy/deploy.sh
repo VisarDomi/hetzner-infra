@@ -43,6 +43,8 @@ declare -A REPO_DIRS=(
 
     [trader-ui]="trader-ui"
     [visar]="visar-dev-site"
+    [biomorph]="biomorph-website"
+    [cashback]="cashback"
 )
 
 declare -A SERVER_PATHS=(
@@ -53,6 +55,8 @@ declare -A SERVER_PATHS=(
 
     [trader-ui]="/home/erdal/trader-ui"
     [visar]="/home/erdal/visar"
+    [biomorph]="/home/erdal/biomorph"
+    [cashback]="/home/erdal/cashback"
 )
 
 declare -A DEPLOY_TYPES=(
@@ -63,6 +67,8 @@ declare -A DEPLOY_TYPES=(
 
     [trader-ui]="node"
     [visar]="node"
+    [biomorph]="static"
+    [cashback]="static"
 )
 
 declare -A INSTALL_CMDS=(
@@ -73,6 +79,8 @@ declare -A INSTALL_CMDS=(
 
     [trader-ui]="npm ci"
     [visar]="npm ci"
+    [biomorph]="npm install"
+    [cashback]="true"
 )
 
 declare -A BUILD_CMDS=(
@@ -83,6 +91,8 @@ declare -A BUILD_CMDS=(
 
     [trader-ui]="npm run build"
     [visar]="npm run build && python3 -m weasyprint static/cv.html build/client/visar-domi-cv.pdf"
+    [biomorph]="npm run build"
+    [cashback]="npm run build"
 )
 
 # Path to the build output directory (relative to the extracted source root)
@@ -94,6 +104,8 @@ declare -A BUILD_OUTPUTS=(
 
     [trader-ui]="build"
     [visar]="build"
+    [biomorph]="dist"
+    [cashback]="dist"
 )
 
 # Systemd service name (node deploy type only, leave empty for static)
@@ -105,6 +117,8 @@ declare -A SERVICE_NAMES=(
 
     [trader-ui]="trader-ui"
     [visar]="visar"
+    [biomorph]=""
+    [cashback]=""
 )
 
 # Env file to copy from working dir before build (leave empty if not needed)
@@ -116,6 +130,8 @@ declare -A ENV_FILES=(
 
     [trader-ui]=".env"
     [visar]=""
+    [biomorph]=""
+    [cashback]=""
 )
 
 # =============================================================================
@@ -216,6 +232,7 @@ NODE_MODULES_CACHE="$BUILD_BASE/.nm-cache/$PROJECT"
 BUILD_LOCKFILE="$BUILD_DIR/package-lock.json"
 
 CACHE_HIT=false
+CURRENT_HASH=""
 
 if [[ -f "$BUILD_LOCKFILE" ]]; then
     CURRENT_HASH=$(md5sum "$BUILD_LOCKFILE" | cut -d' ' -f1)
@@ -251,6 +268,8 @@ log "Building $PROJECT..." | tee -a "$LOG_FILE"
 if [[ -f "$BUILD_LOCKFILE" ]]; then
     BUILT_MODULES=$(dirname "$BUILD_LOCKFILE")/node_modules
     if [[ -d "$BUILT_MODULES" ]]; then
+        # Re-hash in case npm install created/updated the lockfile
+        [[ -z "$CURRENT_HASH" ]] && CURRENT_HASH=$(md5sum "$BUILD_LOCKFILE" | cut -d' ' -f1)
         rm -rf "$NODE_MODULES_CACHE"
         mkdir -p "$(dirname "$NODE_MODULES_CACHE")"
         cp -a "$BUILT_MODULES" "$NODE_MODULES_CACHE"
