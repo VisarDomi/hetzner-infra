@@ -47,6 +47,7 @@ declare -A REPO_DIRS=(
     [biomorph]="biomorph-website"
     [cashback]="cashback"
     [cashback-deck]="cashback-deck"
+    [cashback-biz]="cashback-biz"
 )
 
 declare -A SERVER_PATHS=(
@@ -61,6 +62,7 @@ declare -A SERVER_PATHS=(
     [biomorph]="/home/erdal/biomorph"
     [cashback]="/home/erdal/cashback"
     [cashback-deck]="/home/erdal/cashback-deck"
+    [cashback-biz]="/home/erdal/cashback-biz"
 )
 
 declare -A DEPLOY_TYPES=(
@@ -75,6 +77,7 @@ declare -A DEPLOY_TYPES=(
     [biomorph]="static"
     [cashback]="static"
     [cashback-deck]="static"
+    [cashback-biz]="static"
 )
 
 declare -A INSTALL_CMDS=(
@@ -89,6 +92,7 @@ declare -A INSTALL_CMDS=(
     [biomorph]="npm install"
     [cashback]="npm ci"
     [cashback-deck]="npm ci"
+    [cashback-biz]="npm ci"
 )
 
 declare -A BUILD_CMDS=(
@@ -103,6 +107,7 @@ declare -A BUILD_CMDS=(
     [biomorph]="npm run build"
     [cashback]="npm run build"
     [cashback-deck]="npm run build"
+    [cashback-biz]="npm run build"
 )
 
 # Path to the build output directory (relative to the extracted source root)
@@ -118,6 +123,7 @@ declare -A BUILD_OUTPUTS=(
     [biomorph]="dist"
     [cashback]="dist"
     [cashback-deck]="dist"
+    [cashback-biz]="dist"
 )
 
 # Systemd service name (node deploy type only, leave empty for static)
@@ -133,6 +139,7 @@ declare -A SERVICE_NAMES=(
     [biomorph]=""
     [cashback]=""
     [cashback-deck]=""
+    [cashback-biz]=""
 )
 
 # Env file to copy from working dir before build (leave empty if not needed)
@@ -148,6 +155,7 @@ declare -A ENV_FILES=(
     [biomorph]=""
     [cashback]=""
     [cashback-deck]=""
+    [cashback-biz]=""
 )
 
 # =============================================================================
