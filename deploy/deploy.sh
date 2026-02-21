@@ -45,11 +45,12 @@ declare -A REPO_DIRS=(
     [tendies]="trader-svelte"
     [visar]="visar-dev-site"
     [biomorph]="biomorph-website"
-    [cashback]="cashback"
-    [cashback-deck]="cashback-deck"
-    [cashback-biz]="cashback-biz"
+    [cashback]="cashback-mono"
+    [cashback-deck]="cashback-mono"
+    [cashback-biz]="cashback-mono"
     [blog]="blog"
     [admin]="hetzner-infra"
+    [pm-graph]="hetzner-infra"
 )
 
 declare -A SERVER_PATHS=(
@@ -67,6 +68,7 @@ declare -A SERVER_PATHS=(
     [cashback-biz]="/home/erdal/cashback-biz"
     [blog]="/home/erdal/blog"
     [admin]="/home/erdal/admin"
+    [pm-graph]="/home/erdal/pm-graph"
 )
 
 declare -A DEPLOY_TYPES=(
@@ -84,6 +86,7 @@ declare -A DEPLOY_TYPES=(
     [cashback-biz]="static"
     [blog]="static"
     [admin]="static"
+    [pm-graph]="static"
 )
 
 declare -A INSTALL_CMDS=(
@@ -101,6 +104,7 @@ declare -A INSTALL_CMDS=(
     [cashback-biz]="npm ci"
     [blog]="true"
     [admin]="cd projects-portal && npm ci"
+    [pm-graph]="cd pm-graph && npm ci"
 )
 
 declare -A BUILD_CMDS=(
@@ -118,6 +122,7 @@ declare -A BUILD_CMDS=(
     [cashback-biz]="npm run build"
     [blog]="/home/visar/go/bin/hugo"
     [admin]="cd projects-portal && npm run build"
+    [pm-graph]="cd pm-graph && npm run build"
 )
 
 # Path to the build output directory (relative to the extracted source root)
@@ -136,6 +141,7 @@ declare -A BUILD_OUTPUTS=(
     [cashback-biz]="dist"
     [blog]="public"
     [admin]="projects-portal/build"
+    [pm-graph]="pm-graph/build"
 )
 
 # Systemd service name (node deploy type only, leave empty for static)
@@ -154,6 +160,7 @@ declare -A SERVICE_NAMES=(
     [cashback-biz]=""
     [blog]=""
     [admin]=""
+    [pm-graph]=""
 )
 
 # Env file to copy from working dir before build (leave empty if not needed)
@@ -172,6 +179,14 @@ declare -A ENV_FILES=(
     [cashback-biz]=""
     [blog]=""
     [admin]=""
+    [pm-graph]=""
+)
+
+# For monorepo projects: subdirectory within the repo to extract (empty = whole repo)
+declare -A REPO_SUBDIRS=(
+    [cashback]="apps/cashback"
+    [cashback-deck]="apps/cashback-deck"
+    [cashback-biz]="apps/cashback-biz"
 )
 
 # =============================================================================
@@ -223,6 +238,7 @@ SERVER_PATH="${SERVER_PATHS[$PROJECT]}"
 DEPLOY_TYPE="${DEPLOY_TYPES[$PROJECT]}"
 BUILD_OUTPUT="${BUILD_OUTPUTS[$PROJECT]}"
 SERVICE="${SERVICE_NAMES[$PROJECT]:-}"
+SUBDIR="${REPO_SUBDIRS[$PROJECT]:-}"
 SHA_FILE="$DEPLOY_STATE_DIR/$PROJECT.sha"
 LOG_FILE="$LOG_DIR/$PROJECT.log"
 
@@ -252,7 +268,12 @@ log "$PROJECT: $LAST_SHA → $REMOTE_SHA" | tee -a "$LOG_FILE"
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 log "Extracting origin/main to $BUILD_DIR..." | tee -a "$LOG_FILE"
-git -C "$REPO_DIR" archive origin/main | tar -x -C "$BUILD_DIR" 2>>"$LOG_FILE"
+if [[ -n "$SUBDIR" ]]; then
+    STRIP_DEPTH=$(echo "$SUBDIR" | awk -F/ '{print NF}')
+    git -C "$REPO_DIR" archive origin/main -- "$SUBDIR" | tar -x -C "$BUILD_DIR" --strip-components="$STRIP_DEPTH" 2>>"$LOG_FILE"
+else
+    git -C "$REPO_DIR" archive origin/main | tar -x -C "$BUILD_DIR" 2>>"$LOG_FILE"
+fi
 
 # Some tools (e.g. Astro MDX) call `git log` for file dates — init a temp repo
 git -C "$BUILD_DIR" init -q 2>>"$LOG_FILE"
@@ -261,9 +282,12 @@ git -C "$BUILD_DIR" -c user.name="deploy" -c user.email="deploy@veron3" commit -
 
 # 4. Copy env file if needed (e.g. SvelteKit needs env vars at build time)
 ENV_FILE="${ENV_FILES[$PROJECT]:-}"
-if [[ -n "$ENV_FILE" && -f "$REPO_DIR/$ENV_FILE" ]]; then
-    cp "$REPO_DIR/$ENV_FILE" "$BUILD_DIR/$ENV_FILE"
-    log "Copied $ENV_FILE to build dir" | tee -a "$LOG_FILE"
+if [[ -n "$ENV_FILE" ]]; then
+    ENV_SOURCE="$REPO_DIR/${SUBDIR:+$SUBDIR/}$ENV_FILE"
+    if [[ -f "$ENV_SOURCE" ]]; then
+        cp "$ENV_SOURCE" "$BUILD_DIR/$ENV_FILE"
+        log "Copied $ENV_FILE to build dir" | tee -a "$LOG_FILE"
+    fi
 fi
 
 # 5. Restore cached node_modules if package-lock.json unchanged
