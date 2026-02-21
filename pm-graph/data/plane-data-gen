@@ -2,18 +2,13 @@
 """
 Fetch all open Plane tickets + relations, write data.json for the pm-graph PWA.
 
-Runs on the Hetzner server via cron (*/5 * * * *).
+Runs on the Hetzner server via systemd timer (every 5 minutes).
 - Issues: fetched via Plane public API (API key auth)
-- Relations: fetched via Plane internal API (session cookie auth)
-  - Session obtained by logging in to Plane (email+password)
-  - Cached at /tmp/plane-session for reuse
-  - Falls back to direct Postgres query if login fails
+- Relations: fetched via Plane Postgres DB (docker exec into plane-db container)
 
-Environment variables (set in cron or shell):
+Environment variables:
   PLANE_API_KEY       — Plane API key (required)
-  PLANE_EMAIL         — Plane login email (for session auth)
-  PLANE_PASSWORD      — Plane login password (for session auth)
-  PLANE_DB            — Postgres connection string (fallback for relations)
+  PLANE_DB_PASSWORD   — Postgres password for plane user
   OUTPUT_DIR          — Where to write data.json (default: script's parent dir)
 """
 
@@ -23,18 +18,13 @@ import subprocess
 import sys
 import time
 import urllib.request
-import urllib.parse
 
 API = "https://pm.veron3.space/api/v1/workspaces/veron3"
-INTERNAL_API = "https://pm.veron3.space/api/workspaces/veron3"
-PLANE_HOST = "https://pm.veron3.space"
 DELAY = 0.6
-SESSION_CACHE = "/tmp/plane-session"
 
 API_KEY = os.environ.get("PLANE_API_KEY", "")
-PLANE_EMAIL = os.environ.get("PLANE_EMAIL", "")
-PLANE_PASSWORD = os.environ.get("PLANE_PASSWORD", "")
-PLANE_DB = os.environ.get("PLANE_DB", "")
+DB_PASSWORD = os.environ.get("PLANE_DB_PASSWORD", "")
+DB_CONTAINER = "plane-app-plane-db-1"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR", os.path.dirname(SCRIPT_DIR))
@@ -47,115 +37,34 @@ def api_get(path):
         return json.loads(resp.read())
 
 
-def internal_get(path, session):
-    url = f"{INTERNAL_API}{path}"
-    req = urllib.request.Request(url, headers={"Cookie": f"session-id={session}"})
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        return json.loads(resp.read())
-
-
-def get_cached_session():
-    """Try to load a cached session cookie."""
-    try:
-        if os.path.exists(SESSION_CACHE):
-            age = time.time() - os.path.getmtime(SESSION_CACHE)
-            if age < 86400:  # 24 hours
-                with open(SESSION_CACHE) as f:
-                    session = f.read().strip()
-                if session:
-                    # Validate it
-                    try:
-                        internal_get("/projects/", session)
-                        return session
-                    except Exception:
-                        pass
-    except Exception:
-        pass
-    return None
-
-
-def login_to_plane():
-    """Authenticate to Plane via email+password, return session cookie."""
-    if not PLANE_EMAIL or not PLANE_PASSWORD:
-        return None
-
-    # Try Plane CE v1.2.1 login endpoints
-    endpoints = [
-        "/api/sign-in/",
-        "/api/v1/sign-in/",
-        "/api/sign-ins/",
-        "/api/get-token/",
-    ]
-
-    payload = json.dumps({"email": PLANE_EMAIL, "password": PLANE_PASSWORD}).encode()
-
-    for endpoint in endpoints:
-        try:
-            url = f"{PLANE_HOST}{endpoint}"
-            req = urllib.request.Request(
-                url,
-                data=payload,
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                # Look for session-id in Set-Cookie header
-                cookies = resp.headers.get_all("Set-Cookie") or []
-                for cookie in cookies:
-                    if "session-id=" in cookie:
-                        session = cookie.split("session-id=")[1].split(";")[0]
-                        # Cache it
-                        with open(SESSION_CACHE, "w") as f:
-                            f.write(session)
-                        return session
-
-                # Some endpoints return token in body
-                body = json.loads(resp.read())
-                if "token" in body:
-                    session = body["token"]
-                    with open(SESSION_CACHE, "w") as f:
-                        f.write(session)
-                    return session
-        except Exception:
-            continue
-
-    return None
-
-
-def get_session():
-    """Get a valid session cookie, trying cache first, then login."""
-    session = get_cached_session()
-    if session:
-        return session
-    return login_to_plane()
-
-
 def fetch_relations_from_db(open_issues, errors):
-    """Fallback: fetch relations directly from Postgres."""
-    if not PLANE_DB:
+    """Fetch relations directly from Plane's Postgres via docker exec."""
+    if not DB_PASSWORD:
+        errors.append("relations: PLANE_DB_PASSWORD not set")
         return []
 
     try:
-        # Build issue UUID map
         uuid_to_id = {}
         for issue in open_issues:
             uuid_to_id[issue["_issue_uuid"]] = issue["id"]
 
-        project_uuids = set(issue["_project_uuid"] for issue in open_issues)
-        placeholders = ",".join(f"'{p}'" for p in project_uuids)
-
-        query = f"""
+        query = """
             SELECT
                 ir.issue_id::text,
-                ir.related_issue::text,
+                ir.related_issue_id::text,
                 ir.relation_type
             FROM issue_relations ir
-            JOIN issues i1 ON ir.issue_id = i1.id
-            WHERE i1.project_id IN ({placeholders})
         """
 
         result = subprocess.run(
-            ["psql", PLANE_DB, "-t", "-A", "-F", "|", "-c", query],
+            [
+                "docker", "exec",
+                "-e", f"PGPASSWORD={DB_PASSWORD}",
+                DB_CONTAINER,
+                "psql", "-U", "plane", "-d", "plane",
+                "-t", "-A", "-F", "|",
+                "-c", query,
+            ],
             capture_output=True, text=True, timeout=15,
         )
 
@@ -171,10 +80,13 @@ def fetch_relations_from_db(open_issues, errors):
             if len(parts) != 3:
                 continue
             issue_uuid, related_uuid, rel_type = parts
-            source = uuid_to_id.get(issue_uuid, f"?-{issue_uuid[:8]}")
-            target = uuid_to_id.get(related_uuid, f"?-{related_uuid[:8]}")
+            source = uuid_to_id.get(issue_uuid)
+            target = uuid_to_id.get(related_uuid)
 
-            # Normalize relation type
+            # Skip relations where either side isn't in our open issues
+            if not source or not target:
+                continue
+
             if rel_type == "blocking":
                 relations.append({
                     "source": target, "type": "blocked_by",
@@ -193,46 +105,8 @@ def fetch_relations_from_db(open_issues, errors):
 
         return relations
     except Exception as e:
-        errors.append(f"Postgres fallback failed: {e}")
+        errors.append(f"Postgres query failed: {e}")
         return []
-
-
-def fetch_relations_api(open_issues, session, errors):
-    """Fetch relations via internal API using session cookie."""
-    relations = []
-    for i, issue in enumerate(open_issues):
-        if i > 0:
-            time.sleep(DELAY)
-        pid = issue["_project_uuid"]
-        iid = issue["_issue_uuid"]
-        ident = issue["id"]
-        try:
-            data = internal_get(f"/projects/{pid}/issues/{iid}/issue-relation/", session)
-        except Exception as e:
-            errors.append(f"{ident}: relations fetch failed ({e})")
-            continue
-        for rel_type in ("blocking", "blocked_by", "relates_to"):
-            for rel in data.get(rel_type, []):
-                rel_ident = None
-                for oi in open_issues:
-                    if oi["_issue_uuid"] == rel["id"]:
-                        rel_ident = oi["id"]
-                        break
-                if not rel_ident:
-                    rel_proj = rel.get("project_id", "")
-                    for oi in open_issues:
-                        if oi["_project_uuid"] == rel_proj:
-                            rel_ident = f"{oi['project']}-{rel.get('sequence_id', '?')}"
-                            break
-                    if not rel_ident:
-                        rel_ident = f"?-{rel.get('sequence_id', '?')}"
-                relations.append({
-                    "source": ident,
-                    "type": rel_type,
-                    "target": rel_ident,
-                    "target_title": rel.get("name", ""),
-                })
-    return relations
 
 
 def dedupe_relations(relations):
@@ -314,16 +188,9 @@ def fetch_all():
                 "_issue_uuid": issue.get("id"),
             })
 
-    # Fetch relations: try session auth first, fall back to Postgres
-    relations = []
-    session = get_session()
-    if session:
-        relations = fetch_relations_api(all_issues, session, errors)
-        relations = dedupe_relations(relations)
-    else:
-        errors.append("relations: no session available, trying Postgres fallback")
-        relations = fetch_relations_from_db(all_issues, errors)
-        relations = dedupe_relations(relations)
+    # Fetch relations from Postgres
+    relations = fetch_relations_from_db(all_issues, errors)
+    relations = dedupe_relations(relations)
 
     # Strip internal UUIDs from output
     for issue in all_issues:
@@ -337,13 +204,11 @@ if __name__ == "__main__":
     try:
         result = fetch_all()
         output_path = os.path.join(OUTPUT_DIR, "data.json")
-        # Write atomically
         tmp_path = output_path + ".tmp"
         with open(tmp_path, "w") as f:
             json.dump(result, f, indent=2)
         os.replace(tmp_path, output_path)
     except Exception as e:
-        # Write error state
         output_path = os.path.join(OUTPUT_DIR, "data.json")
         with open(output_path, "w") as f:
             json.dump({"issues": [], "relations": [], "errors": [str(e)], "total": 0}, f)
