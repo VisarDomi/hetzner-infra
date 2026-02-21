@@ -1,0 +1,11 @@
+{
+  "issues": [
+    {"id": "VERON-1", "project": "VERON", "project_name": "Veron", "title": "Sample ticket A", "priority": "high", "state": "unstarted", "state_group": "unstarted", "created": "2025-01-01", "updated": "2025-01-02"},
+    {"id": "VERON-2", "project": "VERON", "project_name": "Veron", "title": "Sample ticket B (blocked by A)", "priority": "medium", "state": "backlog", "state_group": "backlog", "created": "2025-01-01", "updated": "2025-01-02"}
+  ],
+  "relations": [
+    {"source": "VERON-2", "type": "blocked_by", "target": "VERON-1", "target_title": "Sample ticket A"}
+  ],
+  "errors": [],
+  "total": 2
+}

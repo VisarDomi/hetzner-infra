@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:root {
+	--bg: #0d1117;
+	--bg-card: #161b22;
+	--border: #30363d;
+	--text: #c9d1d9;
+	--text-muted: #8b949e;
+	--text-bright: #f0f6fc;
+	--accent: #58a6ff;
+	--urgent: #f85149;
+	--high: #d29922;
+	--medium: #58a6ff;
+	--low: #30363d;
+	--arrow: #f0883e;
+	--relates: #8b949e;
+}
+
+html, body {
+	height: 100%;
+	background: var(--bg);
+	color: var(--text);
+	font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+body {
+	padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-y: contain;
+}
+
+.container {
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 24px 16px;
+}
+
+header {
+	margin-bottom: 24px;
+}
+
+header h1 {
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--text-bright);
+}
+
+.stats {
+	color: var(--text-muted);
+	font-size: 14px;
+	margin-top: 8px;
+	font-family: 'JetBrains Mono', monospace;
+}
+
+.legend {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 24px;
+	flex-wrap: wrap;
+}
+
+.legend-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.legend-color {
+	width: 12px;
+	height: 12px;
+	border-radius: 3px;
+	border: 2px solid;
+}
+
+.legend-color.urgent { border-color: var(--urgent); }
+.legend-color.high { border-color: var(--high); }
+.legend-color.medium { border-color: var(--medium); }
+.legend-color.low { border-color: var(--low); }
+.legend-color.none { border-color: var(--border); }
+
+.graph-container {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.chain-group {
+	background: var(--bg-card);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 20px;
+}
+
+.chain-group h2 {
+	font-size: 15px;
+	color: var(--text-muted);
+	margin-bottom: 16px;
+	font-weight: 500;
+}
+
+.chain {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.chain:last-child {
+	margin-bottom: 0;
+}
+
+.node {
+	display: inline-flex;
+	flex-direction: column;
+	padding: 8px 12px;
+	border-radius: 6px;
+	border: 1px solid var(--border);
+	background: var(--bg);
+	min-width: 120px;
+	text-decoration: none;
+	color: inherit;
+	transition: border-color 0.15s, background 0.15s;
+}
+
+.node:hover {
+	background: #1c2128;
+	border-color: var(--accent);
+}
+
+.node.priority-urgent { border-color: var(--urgent); }
+.node.priority-high { border-color: var(--high); }
+.node.priority-medium { border-color: var(--medium); }
+.node.priority-low { border-color: var(--low); }
+.node.priority-none { border-color: var(--border); }
+
+.node-id {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--accent);
+	font-family: 'JetBrains Mono', monospace;
+}
+
+.node-title {
+	font-size: 11px;
+	color: var(--text-muted);
+	margin-top: 2px;
+	max-width: 250px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.arrow {
+	color: var(--arrow);
+	font-size: 18px;
+	font-weight: bold;
+	flex-shrink: 0;
+}
+
+.arrow.relates {
+	color: var(--relates);
+}
+
+.loading {
+	text-align: center;
+	padding: 48px;
+	color: var(--text-muted);
+	font-size: 14px;
+}
+
+.error {
+	text-align: center;
+	padding: 48px;
+	color: var(--urgent);
+	font-size: 14px;
+}
+
+.refresh-indicator {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: var(--accent);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.3s;
+	z-index: 100;
+}
+
+.refresh-indicator.active {
+	transform: scaleX(1);
+}
+
+.last-updated {
+	color: var(--text-muted);
+	font-size: 12px;
+	font-family: 'JetBrains Mono', monospace;
+	margin-top: 4px;
+}
+
+footer {
+	margin-top: 32px;
+	padding-top: 16px;
+	border-top: 1px solid var(--border);
+	color: var(--text-muted);
+	font-size: 12px;
+	font-family: 'JetBrains Mono', monospace;
+	text-align: center;
+}
+
+@media (max-width: 600px) {
+	.container {
+		padding: 16px 12px;
+	}
+
+	.node {
+		min-width: 100px;
+	}
+
+	.node-title {
+		max-width: 180px;
+	}
+
+	.chain-group {
+		padding: 14px;
+	}
+}

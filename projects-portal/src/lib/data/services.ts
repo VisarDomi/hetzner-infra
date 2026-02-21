@@ -236,6 +236,16 @@ export const services: Service[] = [
 		status: 'live',
 		section: 'infra',
 	},
+	{
+		name: 'PM Graph',
+		code: 'Dependency Graph',
+		icon: '\u{1F578}\u{FE0F}',
+		description: 'Interactive dependency graph for Plane tickets. Visualizes blocker chains and relations across projects.',
+		url: 'https://pm-graph.veron3.space',
+		domain: 'pm-graph.veron3.space',
+		status: 'live',
+		section: 'infra',
+	},
 
 	// ── In Development ───────────────────────────────────
 	{

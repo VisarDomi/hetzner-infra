@@ -1,0 +1,350 @@
+#!/usr/bin/env python3
+"""
+Fetch all open Plane tickets + relations, write data.json for the pm-graph PWA.
+
+Runs on the Hetzner server via cron (*/5 * * * *).
+- Issues: fetched via Plane public API (API key auth)
+- Relations: fetched via Plane internal API (session cookie auth)
+  - Session obtained by logging in to Plane (email+password)
+  - Cached at /tmp/plane-session for reuse
+  - Falls back to direct Postgres query if login fails
+
+Environment variables (set in cron or shell):
+  PLANE_API_KEY       — Plane API key (required)
+  PLANE_EMAIL         — Plane login email (for session auth)
+  PLANE_PASSWORD      — Plane login password (for session auth)
+  PLANE_DB            — Postgres connection string (fallback for relations)
+  OUTPUT_DIR          — Where to write data.json (default: script's parent dir)
+"""
+
+import json
+import os
+import subprocess
+import sys
+import time
+import urllib.request
+import urllib.parse
+
+API = "https://pm.veron3.space/api/v1/workspaces/veron3"
+INTERNAL_API = "https://pm.veron3.space/api/workspaces/veron3"
+PLANE_HOST = "https://pm.veron3.space"
+DELAY = 0.6
+SESSION_CACHE = "/tmp/plane-session"
+
+API_KEY = os.environ.get("PLANE_API_KEY", "")
+PLANE_EMAIL = os.environ.get("PLANE_EMAIL", "")
+PLANE_PASSWORD = os.environ.get("PLANE_PASSWORD", "")
+PLANE_DB = os.environ.get("PLANE_DB", "")
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.environ.get("OUTPUT_DIR", os.path.dirname(SCRIPT_DIR))
+
+
+def api_get(path):
+    url = f"{API}{path}"
+    req = urllib.request.Request(url, headers={"x-api-key": API_KEY})
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return json.loads(resp.read())
+
+
+def internal_get(path, session):
+    url = f"{INTERNAL_API}{path}"
+    req = urllib.request.Request(url, headers={"Cookie": f"session-id={session}"})
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return json.loads(resp.read())
+
+
+def get_cached_session():
+    """Try to load a cached session cookie."""
+    try:
+        if os.path.exists(SESSION_CACHE):
+            age = time.time() - os.path.getmtime(SESSION_CACHE)
+            if age < 86400:  # 24 hours
+                with open(SESSION_CACHE) as f:
+                    session = f.read().strip()
+                if session:
+                    # Validate it
+                    try:
+                        internal_get("/projects/", session)
+                        return session
+                    except Exception:
+                        pass
+    except Exception:
+        pass
+    return None
+
+
+def login_to_plane():
+    """Authenticate to Plane via email+password, return session cookie."""
+    if not PLANE_EMAIL or not PLANE_PASSWORD:
+        return None
+
+    # Try Plane CE v1.2.1 login endpoints
+    endpoints = [
+        "/api/sign-in/",
+        "/api/v1/sign-in/",
+        "/api/sign-ins/",
+        "/api/get-token/",
+    ]
+
+    payload = json.dumps({"email": PLANE_EMAIL, "password": PLANE_PASSWORD}).encode()
+
+    for endpoint in endpoints:
+        try:
+            url = f"{PLANE_HOST}{endpoint}"
+            req = urllib.request.Request(
+                url,
+                data=payload,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                # Look for session-id in Set-Cookie header
+                cookies = resp.headers.get_all("Set-Cookie") or []
+                for cookie in cookies:
+                    if "session-id=" in cookie:
+                        session = cookie.split("session-id=")[1].split(";")[0]
+                        # Cache it
+                        with open(SESSION_CACHE, "w") as f:
+                            f.write(session)
+                        return session
+
+                # Some endpoints return token in body
+                body = json.loads(resp.read())
+                if "token" in body:
+                    session = body["token"]
+                    with open(SESSION_CACHE, "w") as f:
+                        f.write(session)
+                    return session
+        except Exception:
+            continue
+
+    return None
+
+
+def get_session():
+    """Get a valid session cookie, trying cache first, then login."""
+    session = get_cached_session()
+    if session:
+        return session
+    return login_to_plane()
+
+
+def fetch_relations_from_db(open_issues, errors):
+    """Fallback: fetch relations directly from Postgres."""
+    if not PLANE_DB:
+        return []
+
+    try:
+        # Build issue UUID map
+        uuid_to_id = {}
+        for issue in open_issues:
+            uuid_to_id[issue["_issue_uuid"]] = issue["id"]
+
+        project_uuids = set(issue["_project_uuid"] for issue in open_issues)
+        placeholders = ",".join(f"'{p}'" for p in project_uuids)
+
+        query = f"""
+            SELECT
+                ir.issue_id::text,
+                ir.related_issue::text,
+                ir.relation_type
+            FROM issue_relations ir
+            JOIN issues i1 ON ir.issue_id = i1.id
+            WHERE i1.project_id IN ({placeholders})
+        """
+
+        result = subprocess.run(
+            ["psql", PLANE_DB, "-t", "-A", "-F", "|", "-c", query],
+            capture_output=True, text=True, timeout=15,
+        )
+
+        if result.returncode != 0:
+            errors.append(f"Postgres query failed: {result.stderr.strip()}")
+            return []
+
+        relations = []
+        for line in result.stdout.strip().split("\n"):
+            if not line:
+                continue
+            parts = line.split("|")
+            if len(parts) != 3:
+                continue
+            issue_uuid, related_uuid, rel_type = parts
+            source = uuid_to_id.get(issue_uuid, f"?-{issue_uuid[:8]}")
+            target = uuid_to_id.get(related_uuid, f"?-{related_uuid[:8]}")
+
+            # Normalize relation type
+            if rel_type == "blocking":
+                relations.append({
+                    "source": target, "type": "blocked_by",
+                    "target": source, "target_title": "",
+                })
+            elif rel_type == "blocked_by":
+                relations.append({
+                    "source": source, "type": "blocked_by",
+                    "target": target, "target_title": "",
+                })
+            else:
+                relations.append({
+                    "source": source, "type": "relates_to",
+                    "target": target, "target_title": "",
+                })
+
+        return relations
+    except Exception as e:
+        errors.append(f"Postgres fallback failed: {e}")
+        return []
+
+
+def fetch_relations_api(open_issues, session, errors):
+    """Fetch relations via internal API using session cookie."""
+    relations = []
+    for i, issue in enumerate(open_issues):
+        if i > 0:
+            time.sleep(DELAY)
+        pid = issue["_project_uuid"]
+        iid = issue["_issue_uuid"]
+        ident = issue["id"]
+        try:
+            data = internal_get(f"/projects/{pid}/issues/{iid}/issue-relation/", session)
+        except Exception as e:
+            errors.append(f"{ident}: relations fetch failed ({e})")
+            continue
+        for rel_type in ("blocking", "blocked_by", "relates_to"):
+            for rel in data.get(rel_type, []):
+                rel_ident = None
+                for oi in open_issues:
+                    if oi["_issue_uuid"] == rel["id"]:
+                        rel_ident = oi["id"]
+                        break
+                if not rel_ident:
+                    rel_proj = rel.get("project_id", "")
+                    for oi in open_issues:
+                        if oi["_project_uuid"] == rel_proj:
+                            rel_ident = f"{oi['project']}-{rel.get('sequence_id', '?')}"
+                            break
+                    if not rel_ident:
+                        rel_ident = f"?-{rel.get('sequence_id', '?')}"
+                relations.append({
+                    "source": ident,
+                    "type": rel_type,
+                    "target": rel_ident,
+                    "target_title": rel.get("name", ""),
+                })
+    return relations
+
+
+def dedupe_relations(relations):
+    seen = set()
+    deduped = []
+    for r in relations:
+        if r["type"] == "blocking":
+            r = {"source": r["target"], "type": "blocked_by", "target": r["source"],
+                 "target_title": ""}
+        if r["type"] == "blocked_by":
+            key = ("blocked_by", r["source"], r["target"])
+        else:
+            key = ("relates_to", *sorted([r["source"], r["target"]]))
+        if key not in seen:
+            seen.add(key)
+            deduped.append(r)
+    return deduped
+
+
+def fetch_all():
+    projects = api_get("/projects/")["results"]
+
+    all_issues = []
+    errors = []
+
+    for i, proj in enumerate(projects):
+        pid = proj["id"]
+        ident = proj["identifier"]
+        name = proj["name"]
+
+        if i > 0:
+            time.sleep(DELAY)
+
+        try:
+            states_raw = api_get(f"/projects/{pid}/states/")
+            states = {}
+            items = states_raw.get("results", states_raw) if isinstance(states_raw, dict) else states_raw
+            if isinstance(items, list):
+                for s in items:
+                    states[s["id"]] = {"name": s["name"], "group": s["group"]}
+            elif isinstance(items, dict):
+                for s in items.get("results", []):
+                    states[s["id"]] = {"name": s["name"], "group": s["group"]}
+        except Exception as e:
+            errors.append(f"{ident}: states fetch failed ({e})")
+            states = {}
+
+        time.sleep(DELAY)
+
+        try:
+            data = api_get(f"/projects/{pid}/issues/?per_page=100")
+            issues = data.get("results", [])
+        except Exception as e:
+            errors.append(f"{ident}: issues fetch failed ({e})")
+            continue
+
+        open_groups = {"backlog", "unstarted", "started"}
+        for issue in issues:
+            state_info = states.get(issue.get("state"), {})
+            group = state_info.get("group", "")
+            if group not in open_groups:
+                continue
+
+            prio = issue.get("priority", "none")
+            if isinstance(prio, int):
+                prio = {0: "urgent", 1: "high", 2: "medium", 3: "low"}.get(prio, "none")
+
+            all_issues.append({
+                "id": f"{ident}-{issue.get('sequence_id', '?')}",
+                "project": ident,
+                "project_name": name,
+                "title": issue.get("name", "Untitled"),
+                "priority": prio or "none",
+                "state": state_info.get("name", "unknown"),
+                "state_group": group,
+                "created": issue.get("created_at", "")[:10],
+                "updated": issue.get("updated_at", "")[:10],
+                "_project_uuid": pid,
+                "_issue_uuid": issue.get("id"),
+            })
+
+    # Fetch relations: try session auth first, fall back to Postgres
+    relations = []
+    session = get_session()
+    if session:
+        relations = fetch_relations_api(all_issues, session, errors)
+        relations = dedupe_relations(relations)
+    else:
+        errors.append("relations: no session available, trying Postgres fallback")
+        relations = fetch_relations_from_db(all_issues, errors)
+        relations = dedupe_relations(relations)
+
+    # Strip internal UUIDs from output
+    for issue in all_issues:
+        issue.pop("_project_uuid", None)
+        issue.pop("_issue_uuid", None)
+
+    return {"issues": all_issues, "relations": relations, "errors": errors, "total": len(all_issues)}
+
+
+if __name__ == "__main__":
+    try:
+        result = fetch_all()
+        output_path = os.path.join(OUTPUT_DIR, "data.json")
+        # Write atomically
+        tmp_path = output_path + ".tmp"
+        with open(tmp_path, "w") as f:
+            json.dump(result, f, indent=2)
+        os.replace(tmp_path, output_path)
+    except Exception as e:
+        # Write error state
+        output_path = os.path.join(OUTPUT_DIR, "data.json")
+        with open(output_path, "w") as f:
+            json.dump({"issues": [], "relations": [], "errors": [str(e)], "total": 0}, f)
+        sys.exit(1)

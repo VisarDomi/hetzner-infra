@@ -7,3 +7,8 @@ deploy/logs/
 projects-portal/node_modules/
 projects-portal/build/
 projects-portal/.svelte-kit/
+
+# PM Graph (SvelteKit)
+pm-graph/node_modules/
+pm-graph/build/
+pm-graph/.svelte-kit/
