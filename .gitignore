@@ -2,3 +2,8 @@
 deploy/.state/
 deploy/.cache/
 deploy/logs/
+
+# Projects portal (SvelteKit)
+projects-portal/node_modules/
+projects-portal/build/
+projects-portal/.svelte-kit/

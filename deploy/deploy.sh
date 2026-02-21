@@ -48,6 +48,8 @@ declare -A REPO_DIRS=(
     [cashback]="cashback"
     [cashback-deck]="cashback-deck"
     [cashback-biz]="cashback-biz"
+    [blog]="blog"
+    [admin]="hetzner-infra"
 )
 
 declare -A SERVER_PATHS=(
@@ -63,6 +65,8 @@ declare -A SERVER_PATHS=(
     [cashback]="/home/erdal/cashback"
     [cashback-deck]="/home/erdal/cashback-deck"
     [cashback-biz]="/home/erdal/cashback-biz"
+    [blog]="/home/erdal/blog"
+    [admin]="/home/erdal/admin"
 )
 
 declare -A DEPLOY_TYPES=(
@@ -78,6 +82,8 @@ declare -A DEPLOY_TYPES=(
     [cashback]="static"
     [cashback-deck]="static"
     [cashback-biz]="static"
+    [blog]="static"
+    [admin]="static"
 )
 
 declare -A INSTALL_CMDS=(
@@ -93,6 +99,8 @@ declare -A INSTALL_CMDS=(
     [cashback]="npm ci"
     [cashback-deck]="npm ci"
     [cashback-biz]="npm ci"
+    [blog]="true"
+    [admin]="cd projects-portal && npm ci"
 )
 
 declare -A BUILD_CMDS=(
@@ -108,6 +116,8 @@ declare -A BUILD_CMDS=(
     [cashback]="npm run build"
     [cashback-deck]="npm run build"
     [cashback-biz]="npm run build"
+    [blog]="/home/visar/go/bin/hugo"
+    [admin]="cd projects-portal && npm run build"
 )
 
 # Path to the build output directory (relative to the extracted source root)
@@ -124,6 +134,8 @@ declare -A BUILD_OUTPUTS=(
     [cashback]="dist"
     [cashback-deck]="dist"
     [cashback-biz]="dist"
+    [blog]="public"
+    [admin]="projects-portal/build"
 )
 
 # Systemd service name (node deploy type only, leave empty for static)
@@ -140,6 +152,8 @@ declare -A SERVICE_NAMES=(
     [cashback]=""
     [cashback-deck]=""
     [cashback-biz]=""
+    [blog]=""
+    [admin]=""
 )
 
 # Env file to copy from working dir before build (leave empty if not needed)
@@ -156,6 +170,8 @@ declare -A ENV_FILES=(
     [cashback]=""
     [cashback-deck]=""
     [cashback-biz]=""
+    [blog]=""
+    [admin]=""
 )
 
 # =============================================================================

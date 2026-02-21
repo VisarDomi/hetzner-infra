@@ -6,7 +6,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 POLL_INTERVAL="${VERON3_POLL_INTERVAL:-60}"
-PROJECTS=(lifevault ordretten roni ura trader-ui tendies visar biomorph cashback cashback-deck cashback-biz)
+PROJECTS=(lifevault ordretten roni ura trader-ui tendies visar biomorph cashback cashback-deck cashback-biz blog admin)
 LOCKFILE="/tmp/veron3-deploy.lock"
 
 log() {
