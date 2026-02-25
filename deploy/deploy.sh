@@ -51,6 +51,7 @@ declare -A REPO_DIRS=(
     [blog]="blog"
     [admin]="hetzner-infra"
     [pm-graph]="hetzner-infra"
+    [casino]="claude-casino"
 )
 
 declare -A SERVER_PATHS=(
@@ -69,6 +70,7 @@ declare -A SERVER_PATHS=(
     [blog]="/home/erdal/blog"
     [admin]="/home/erdal/admin"
     [pm-graph]="/home/erdal/pm-graph"
+    [casino]="/home/erdal/casino"
 )
 
 declare -A DEPLOY_TYPES=(
@@ -87,6 +89,7 @@ declare -A DEPLOY_TYPES=(
     [blog]="static"
     [admin]="static"
     [pm-graph]="static"
+    [casino]="python"
 )
 
 declare -A INSTALL_CMDS=(
@@ -105,6 +108,7 @@ declare -A INSTALL_CMDS=(
     [blog]="true"
     [admin]="cd projects-portal && npm ci"
     [pm-graph]="cd pm-graph && npm ci"
+    [casino]="true"
 )
 
 declare -A BUILD_CMDS=(
@@ -123,6 +127,7 @@ declare -A BUILD_CMDS=(
     [blog]="/home/visar/go/bin/hugo"
     [admin]="cd projects-portal && npm run build"
     [pm-graph]="cd pm-graph && npm run build"
+    [casino]="true"
 )
 
 # Path to the build output directory (relative to the extracted source root)
@@ -142,6 +147,7 @@ declare -A BUILD_OUTPUTS=(
     [blog]="public"
     [admin]="projects-portal/build"
     [pm-graph]="pm-graph/build"
+    [casino]="."
 )
 
 # Systemd service name (node deploy type only, leave empty for static)
@@ -161,6 +167,7 @@ declare -A SERVICE_NAMES=(
     [blog]=""
     [admin]=""
     [pm-graph]=""
+    [casino]="casino"
 )
 
 # Env file to copy from working dir before build (leave empty if not needed)
@@ -180,6 +187,7 @@ declare -A ENV_FILES=(
     [blog]=""
     [admin]=""
     [pm-graph]=""
+    [casino]=""
 )
 
 # For monorepo projects: subdirectory within the repo to extract (empty = whole repo)
@@ -366,6 +374,17 @@ case "$DEPLOY_TYPE" in
         ssh "$SERVER" "rm -rf $STAGING_PATH && mkdir -p $STAGING_PATH" 2>>"$LOG_FILE"
         rsync -az --delete "$BUILD_DIR/$BUILD_OUTPUT/" "$SERVER:$STAGING_PATH/" 2>>"$LOG_FILE"
         ssh "$SERVER" "rm -rf $SERVER_PATH && mv $STAGING_PATH $SERVER_PATH" 2>>"$LOG_FILE"
+        ;;
+    python)
+        # Python deploy: rsync source files to staging, preserve venv, swap + restart
+        ssh "$SERVER" "rm -rf $STAGING_PATH && mkdir -p $STAGING_PATH" 2>>"$LOG_FILE"
+        rsync -az --exclude='__pycache__' --exclude='*.pyc' --exclude='venv/' --exclude='.git/' --exclude='node_modules/' --exclude='mcp-server/' --exclude='gambler-templates/' --exclude='*.db' --exclude='*.db-*' "$BUILD_DIR/$BUILD_OUTPUT/" "$SERVER:$STAGING_PATH/" 2>>"$LOG_FILE"
+        ssh "$SERVER" "cp -a $SERVER_PATH/venv $STAGING_PATH/venv 2>/dev/null; sudo systemctl stop $SERVICE && rm -rf $SERVER_PATH && mv $STAGING_PATH $SERVER_PATH && sudo systemctl start $SERVICE" 2>>"$LOG_FILE" || {
+            log "DEPLOY FAILED for $PROJECT on server" | tee -a "$LOG_FILE"
+            ssh "$SERVER" "sudo systemctl start $SERVICE" 2>/dev/null || true
+            record_build "failure" "$(($(date +%s) - BUILD_START))"
+            exit 1
+        }
         ;;
     *)
         die "Unknown deploy type: $DEPLOY_TYPE"
