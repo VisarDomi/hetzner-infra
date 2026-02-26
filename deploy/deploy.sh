@@ -45,9 +45,9 @@ declare -A REPO_DIRS=(
     [tendies]="trader-svelte"
     [visar]="visar-dev-site"
     [biomorph]="biomorph-website"
-    [cashback]="cashback-mono"
-    [cashback-deck]="cashback-mono"
-    [cashback-biz]="cashback-mono"
+    [cashback]="cashback"
+    [cashback-deck]="cashback"
+    [cashback-biz]="cashback"
     [blog]="blog"
     [admin]="hetzner-infra"
     [pm-graph]="hetzner-infra"
@@ -192,9 +192,9 @@ declare -A ENV_FILES=(
 
 # For monorepo projects: subdirectory within the repo to extract (empty = whole repo)
 declare -A REPO_SUBDIRS=(
-    [cashback]="apps/cashback"
-    [cashback-deck]="apps/cashback-deck"
-    [cashback-biz]="apps/cashback-biz"
+    [cashback]="v1/cashback"
+    [cashback-deck]="v1/cashback-deck"
+    [cashback-biz]="v1/cashback-biz"
 )
 
 # =============================================================================
