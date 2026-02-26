@@ -376,7 +376,7 @@ STAGING_PATH="${SERVER_PATH}.staging"
 case "$DEPLOY_TYPE" in
     node)
         # Atomic deploy: rsync to staging dir, install deps, then swap + restart
-        ssh "$SERVER" "rm -rf $STAGING_PATH && cp -a $SERVER_PATH $STAGING_PATH" 2>>"$LOG_FILE"
+        ssh "$SERVER" "rm -rf $STAGING_PATH && { cp -a $SERVER_PATH $STAGING_PATH 2>/dev/null || mkdir -p $STAGING_PATH; }" 2>>"$LOG_FILE"
         rsync -az --delete "$BUILD_DIR/$BUILD_OUTPUT/" "$SERVER:$STAGING_PATH/$BUILD_OUTPUT/" 2>>"$LOG_FILE"
         rsync -az "$BUILD_DIR/package.json" "$BUILD_DIR/package-lock.json" "$SERVER:$STAGING_PATH/" 2>>"$LOG_FILE"
         ssh "$SERVER" "cd $STAGING_PATH && npm ci --production --ignore-scripts && sudo systemctl stop $SERVICE && rm -rf $SERVER_PATH && mv $STAGING_PATH $SERVER_PATH && sudo systemctl start $SERVICE" 2>>"$LOG_FILE" || {
