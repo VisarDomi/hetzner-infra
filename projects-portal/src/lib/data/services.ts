@@ -124,6 +124,16 @@ export const services: Service[] = [
 		status: 'live',
 		section: 'live',
 	},
+	{
+		name: 'Argus',
+		code: 'ARGUS',
+		icon: '\u{1F441}',
+		description: 'Civic awareness app for Albania. Real-time incident map with news scraping, user reports, and gamified engagement.',
+		url: 'https://argus.veron3.space',
+		domain: 'argus.veron3.space',
+		status: 'live',
+		section: 'live',
+	},
 
 	// ── Infrastructure ───────────────────────────────────
 	{

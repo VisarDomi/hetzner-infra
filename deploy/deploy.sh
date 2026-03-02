@@ -54,6 +54,7 @@ declare -A REPO_DIRS=(
     [admin]="hetzner-infra"
     [pm-graph]="hetzner-infra"
     [casino]="claude-casino"
+    [argus]="citizen-app-albania"
 )
 
 declare -A SERVER_PATHS=(
@@ -75,6 +76,7 @@ declare -A SERVER_PATHS=(
     [admin]="/home/erdal/admin"
     [pm-graph]="/home/erdal/pm-graph"
     [casino]="/home/erdal/casino"
+    [argus]="/home/erdal/argus"
 )
 
 declare -A DEPLOY_TYPES=(
@@ -96,6 +98,7 @@ declare -A DEPLOY_TYPES=(
     [admin]="static"
     [pm-graph]="static"
     [casino]="python"
+    [argus]="node"
 )
 
 declare -A INSTALL_CMDS=(
@@ -117,6 +120,7 @@ declare -A INSTALL_CMDS=(
     [admin]="cd projects-portal && npm ci"
     [pm-graph]="cd pm-graph && npm ci"
     [casino]="true"
+    [argus]="npm ci"
 )
 
 declare -A BUILD_CMDS=(
@@ -138,6 +142,7 @@ declare -A BUILD_CMDS=(
     [admin]="cd projects-portal && npm run build"
     [pm-graph]="cd pm-graph && npm run build"
     [casino]="true"
+    [argus]="npm run build"
 )
 
 # Path to the build output directory (relative to the extracted source root)
@@ -160,6 +165,7 @@ declare -A BUILD_OUTPUTS=(
     [admin]="projects-portal/build"
     [pm-graph]="pm-graph/build"
     [casino]="."
+    [argus]="build"
 )
 
 # Systemd service name (node deploy type only, leave empty for static)
@@ -182,6 +188,7 @@ declare -A SERVICE_NAMES=(
     [admin]=""
     [pm-graph]=""
     [casino]="casino"
+    [argus]="argus"
 )
 
 # Env file to copy from working dir before build (leave empty if not needed)
@@ -204,6 +211,7 @@ declare -A ENV_FILES=(
     [admin]=""
     [pm-graph]=""
     [casino]=""
+    [argus]=".env"
 )
 
 # For monorepo projects: subdirectory within the repo to extract (empty = whole repo)
