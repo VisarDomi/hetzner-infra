@@ -10,6 +10,7 @@ export interface Service {
 	domain: string;
 	status: ServiceStatus;
 	section: ServiceSection;
+	group?: string;
 }
 
 export const services: Service[] = [
@@ -53,6 +54,7 @@ export const services: Service[] = [
 		domain: 'trader.veron3.space',
 		status: 'live',
 		section: 'live',
+		group: 'Casino',
 	},
 	{
 		name: 'Moon Tendies',
@@ -63,6 +65,7 @@ export const services: Service[] = [
 		domain: 'tendies.veron3.space',
 		status: 'live',
 		section: 'live',
+		group: 'Casino',
 	},
 	{
 		name: 'Visar Dev Site',
@@ -71,6 +74,16 @@ export const services: Service[] = [
 		description: 'Personal developer portfolio. SvelteKit SSR with auto-generated PDF CV via WeasyPrint.',
 		url: 'https://visar.veron3.space',
 		domain: 'visar.veron3.space',
+		status: 'live',
+		section: 'live',
+	},
+	{
+		name: 'Visar Blog',
+		code: 'VISARBLOG',
+		icon: '\u{1F4DD}',
+		description: 'Technical notes from building things. Hugo-powered, auto-deploys from markdown on push.',
+		url: 'https://blog.visar.veron3.space',
+		domain: 'blog.visar.veron3.space',
 		status: 'live',
 		section: 'live',
 	},
@@ -98,31 +111,45 @@ export const services: Service[] = [
 		name: 'Cashback',
 		code: 'CASHBACK',
 		icon: '\u{1F4B0}',
-		description: 'Cashback platform demo app. Static frontend for the consumer-facing experience.',
+		description: 'Cashback platform v1. Static frontend for the consumer-facing experience.',
 		url: 'https://cashback.veron3.space',
 		domain: 'cashback.veron3.space',
 		status: 'live',
 		section: 'live',
+		group: 'Cashback',
 	},
 	{
-		name: 'Cashback Business',
-		code: 'CASHBACKBIZ',
-		icon: '\u{1F4BC}',
-		description: 'Cashback business portal. Slideshow and documentation for merchant onboarding.',
-		url: 'https://cashback-biz.veron3.space',
-		domain: 'cashback-biz.veron3.space',
+		name: 'Cashback v2',
+		code: 'CASHBACKV2',
+		icon: '\u{1F4B0}',
+		description: 'Cashback v2 demo/pitch PWA. Client-side localStorage mock of bank API for bank meeting.',
+		url: 'https://v2.cashback.veron3.space',
+		domain: 'v2.cashback.veron3.space',
 		status: 'live',
 		section: 'live',
+		group: 'Cashback',
+	},
+	{
+		name: 'Cashback v3',
+		code: 'CASHBACKV3',
+		icon: '\u{1F4B0}',
+		description: 'Cashback v3 production. Server-side SvelteKit with real business logic, auth, and bank API.',
+		url: 'https://v3.cashback.veron3.space',
+		domain: 'v3.cashback.veron3.space',
+		status: 'live',
+		section: 'live',
+		group: 'Cashback',
 	},
 	{
 		name: 'Cashback Deck',
 		code: 'CASHBACKDK',
 		icon: '\u{1F4CA}',
-		description: 'Cashback investor pitch deck. Interactive presentation for fundraising and partnerships.',
+		description: 'Grant 2026 application reference. Scoring criteria, action items, and meeting notes for co-founders.',
 		url: 'https://cashback-deck.veron3.space',
 		domain: 'cashback-deck.veron3.space',
 		status: 'live',
 		section: 'live',
+		group: 'Cashback',
 	},
 	{
 		name: 'Argus',
@@ -227,16 +254,6 @@ export const services: Service[] = [
 		section: 'infra',
 	},
 	{
-		name: 'Blog',
-		code: 'Technical Notes',
-		icon: '\u{1F4DD}',
-		description: 'Technical notes from building things. Hugo-powered, auto-deploys from markdown on push.',
-		url: 'https://blog.visar.veron3.space',
-		domain: 'blog.visar.veron3.space',
-		status: 'live',
-		section: 'infra',
-	},
-	{
 		name: 'Redline',
 		code: 'Feedback Tool',
 		icon: '\u{1F527}',
@@ -259,6 +276,17 @@ export const services: Service[] = [
 
 	// ── In Development ───────────────────────────────────
 	{
+		name: 'Casino',
+		code: 'CASINO',
+		icon: '\u{1F3B0}',
+		description: 'Claude Casino. AI-powered trading game with strategy playground and leaderboards.',
+		url: 'https://casino.veron3.space',
+		domain: 'casino.veron3.space',
+		status: 'live',
+		section: 'live',
+		group: 'Casino',
+	},
+	{
 		name: 'Agent Trading Marketplace',
 		code: 'AGENTTRADI',
 		icon: '\u{1F4CA}',
@@ -267,6 +295,7 @@ export const services: Service[] = [
 		domain: '',
 		status: 'dev',
 		section: 'dev',
+		group: 'Casino',
 	},
 
 	// ── Ideas ────────────────────────────────────────────
