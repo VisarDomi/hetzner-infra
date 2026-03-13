@@ -6,7 +6,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 POLL_INTERVAL="${VERON3_POLL_INTERVAL:-60}"
-PROJECTS=(lifevault ordretten roni ura trader-ui tendies visar biomorph cashback cashback-deck cashback-biz cashback-v2 cashback-v3 blog admin pm-graph casino argus)
+PROJECTS=(lifevault ordretten roni ura trader-ui tendies visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph casino argus)
 LOCKFILE="/tmp/veron3-deploy.lock"
 
 log() {
@@ -41,6 +41,10 @@ while true; do
         "$SCRIPT_DIR/deploy.sh" "$project" 2>&1 || {
             log "WARNING: $project deploy check failed (will retry next cycle)"
         }
+        # After admin deploys, check for subdomain drift
+        if [[ "$project" == "admin" ]]; then
+            "$SCRIPT_DIR/check-subdomains.sh" 2>&1 || true
+        fi
     done
 
     rm -f "$LOCKFILE"
