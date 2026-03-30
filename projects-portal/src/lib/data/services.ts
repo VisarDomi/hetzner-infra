@@ -118,6 +118,16 @@ export const services: Service[] = [
 		section: 'live',
 	},
 	{
+		name: 'Cupellabs',
+		code: 'CUPELLABS',
+		icon: '\u{1F52C}',
+		description: 'Cupellabs company website. Static SPA with www and legacy subdomain redirects.',
+		url: 'https://cupellabs.com',
+		domain: 'cupellabs.com',
+		status: 'live',
+		section: 'live',
+	},
+	{
 		name: 'Cashback',
 		code: 'CASHBACK',
 		icon: '\u{1F4B0}',
