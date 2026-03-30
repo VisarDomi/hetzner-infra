@@ -41,7 +41,7 @@ declare -A REPO_DIRS=(
     [roni]="roni-application-tracker"
     [ura]="ura"
 
-    [trader-ui]="trader-ui"
+    [trader-ui]="trader"
     [tendies]="trader-svelte"
     [visar]="visar-dev-site"
     [biomorph]="biomorph-website"
@@ -55,6 +55,8 @@ declare -A REPO_DIRS=(
     [pm-graph]="hetzner-infra"
     [casino]="claude-casino"
     [argus]="citizen-app-albania"
+    [research-visar]="visar-job-search"
+
 )
 
 declare -A SERVER_PATHS=(
@@ -77,6 +79,8 @@ declare -A SERVER_PATHS=(
     [pm-graph]="/home/erdal/pm-graph"
     [casino]="/home/erdal/casino"
     [argus]="/home/erdal/argus"
+    [research-visar]="/home/erdal/research-visar"
+
 )
 
 declare -A DEPLOY_TYPES=(
@@ -99,6 +103,8 @@ declare -A DEPLOY_TYPES=(
     [pm-graph]="static"
     [casino]="python"
     [argus]="node"
+    [research-visar]="static"
+
 )
 
 declare -A INSTALL_CMDS=(
@@ -121,6 +127,8 @@ declare -A INSTALL_CMDS=(
     [pm-graph]="cd pm-graph && npm ci"
     [casino]="true"
     [argus]="npm ci"
+    [research-visar]="true"
+
 )
 
 declare -A BUILD_CMDS=(
@@ -129,7 +137,7 @@ declare -A BUILD_CMDS=(
     [roni]="npm run build"
     [ura]="npx ng build"
 
-    [trader-ui]="npm run build"
+    [trader-ui]="npm run build -w apps/ui"
     [tendies]="npm run build"
     [visar]="npm run build && python3 -m weasyprint static/cv.html build/client/visar-domi-cv.pdf"
     [biomorph]="npm run build"
@@ -143,6 +151,8 @@ declare -A BUILD_CMDS=(
     [pm-graph]="cd pm-graph && npm run build"
     [casino]="true"
     [argus]="npm run build"
+    [research-visar]="cd reports && bash generate-index.sh"
+
 )
 
 # Path to the build output directory (relative to the extracted source root)
@@ -152,7 +162,7 @@ declare -A BUILD_OUTPUTS=(
     [roni]="dist"
     [ura]="preview/browser"
 
-    [trader-ui]="build"
+    [trader-ui]="apps/ui/build"
     [tendies]="build"
     [visar]="build"
     [biomorph]="dist"
@@ -166,6 +176,8 @@ declare -A BUILD_OUTPUTS=(
     [pm-graph]="pm-graph/build"
     [casino]="."
     [argus]="build"
+    [research-visar]="reports"
+
 )
 
 # Systemd service name (node deploy type only, leave empty for static)
@@ -189,6 +201,8 @@ declare -A SERVICE_NAMES=(
     [pm-graph]=""
     [casino]="casino"
     [argus]="argus"
+    [research-visar]=""
+
 )
 
 # Env file to copy from working dir before build (leave empty if not needed)
@@ -198,7 +212,7 @@ declare -A ENV_FILES=(
     [roni]=".env"
     [ura]=""
 
-    [trader-ui]=".env"
+    [trader-ui]="apps/ui/.env"
     [tendies]=".env"
     [visar]=""
     [biomorph]=""
@@ -212,6 +226,14 @@ declare -A ENV_FILES=(
     [pm-graph]=""
     [casino]=""
     [argus]=".env"
+    [research-visar]=""
+
+)
+
+# For npm workspace monorepos: subdirectory containing the workspace package.json
+# Used for node deploys to rsync the right package.json to the server
+declare -A NODE_PKG_DIRS=(
+    [trader-ui]="apps/ui"
 )
 
 # For monorepo projects: subdirectory within the repo to extract (empty = whole repo)
@@ -386,7 +408,12 @@ case "$DEPLOY_TYPE" in
         # Atomic deploy: rsync to staging dir, install deps, then swap + restart
         ssh "$SERVER" "rm -rf $STAGING_PATH && { cp -a $SERVER_PATH $STAGING_PATH 2>/dev/null || mkdir -p $STAGING_PATH; }" 2>>"$LOG_FILE"
         rsync -az --delete "$BUILD_DIR/$BUILD_OUTPUT/" "$SERVER:$STAGING_PATH/$BUILD_OUTPUT/" 2>>"$LOG_FILE"
-        rsync -az "$BUILD_DIR/package.json" "$BUILD_DIR/package-lock.json" "$SERVER:$STAGING_PATH/" 2>>"$LOG_FILE"
+        NODE_PKG_DIR="${NODE_PKG_DIRS[$PROJECT]:-}"
+        if [[ -n "$NODE_PKG_DIR" ]]; then
+            rsync -az "$BUILD_DIR/$NODE_PKG_DIR/package.json" "$BUILD_DIR/package-lock.json" "$SERVER:$STAGING_PATH/" 2>>"$LOG_FILE"
+        else
+            rsync -az "$BUILD_DIR/package.json" "$BUILD_DIR/package-lock.json" "$SERVER:$STAGING_PATH/" 2>>"$LOG_FILE"
+        fi
         ssh "$SERVER" "cd $STAGING_PATH && npm ci --production --ignore-scripts && sudo systemctl stop $SERVICE && rm -rf $SERVER_PATH && mv $STAGING_PATH $SERVER_PATH && sudo systemctl start $SERVICE" 2>>"$LOG_FILE" || {
             log "DEPLOY FAILED for $PROJECT on server" | tee -a "$LOG_FILE"
             # Try to restart the service with whatever is in place

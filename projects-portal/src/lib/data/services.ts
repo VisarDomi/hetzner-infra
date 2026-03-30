@@ -88,6 +88,16 @@ export const services: Service[] = [
 		section: 'live',
 	},
 	{
+		name: 'Visar Reports',
+		code: 'VISARREPO',
+		icon: '\u{1F4D1}',
+		description: 'Research reports and deep dives. Auto-indexed from HTML reports in the repo.',
+		url: 'https://research.visar.veron3.space',
+		domain: 'research.visar.veron3.space',
+		status: 'live',
+		section: 'live',
+	},
+	{
 		name: 'Ordretten',
 		code: 'ORDRETTEN',
 		icon: '\u{1F1EB}\u{1F1F7}',
