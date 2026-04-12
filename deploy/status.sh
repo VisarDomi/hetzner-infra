@@ -47,3 +47,11 @@ elif pgrep -f "watcher.sh" &>/dev/null; then
 else
     echo "Watcher: STOPPED"
 fi
+
+if systemctl --user is-active veron3-webhook.service &>/dev/null; then
+    echo "Webhook: RUNNING (systemd)"
+elif systemctl --user is-active webhook.service &>/dev/null; then
+    echo "Webhook: RUNNING (legacy unit)"
+else
+    echo "Webhook: STOPPED"
+fi

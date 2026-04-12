@@ -2,7 +2,7 @@
 
 Push to `main` on any configured project → deployed to Hetzner within ~2 minutes.
 
-Visar's local PC (z440) is the build server. A systemd service polls GitHub every 60s, builds from `origin/main` via `git archive` (never touches working tree), and deploys via rsync.
+Visar's local PC (z440) is the build server. `veron3-deploy.service` polls GitHub every 60s, builds from `origin/main` via `git archive` (never touches working tree), and deploys via rsync. `veron3-webhook.service` runs the local GitHub webhook receiver for immediate push-triggered deploys.
 
 ## Quick reference
 
@@ -10,6 +10,8 @@ Visar's local PC (z440) is the build server. A systemd service polls GitHub ever
 ./deploy/status.sh                                    # what's deployed
 journalctl --user -u veron3-deploy.service -f         # live logs
 systemctl --user restart veron3-deploy.service        # restart watcher
+journalctl --user -u veron3-webhook.service -f        # webhook logs
+systemctl --user restart veron3-webhook.service       # restart webhook receiver
 ./deploy/deploy.sh <project>                          # manual deploy
 ```
 
