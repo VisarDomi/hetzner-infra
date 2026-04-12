@@ -2,6 +2,7 @@
 deploy/.state/
 deploy/.cache/
 deploy/logs/
+deploy/.webhook-env
 
 # Projects portal (SvelteKit)
 projects-portal/node_modules/
