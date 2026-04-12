@@ -68,6 +68,17 @@ export const services: Service[] = [
 		group: 'Casino',
 	},
 	{
+		name: 'Moon Tendies Showcase',
+		code: 'TENDIESDEMO',
+		icon: '\u{1F52C}',
+		description: 'Private showcase deployment. Demo-only Tendies route with server-owned auth bootstrap for hiring demos.',
+		url: 'https://demo.tendies.veron3.space',
+		domain: 'demo.tendies.veron3.space',
+		status: 'live',
+		section: 'live',
+		group: 'Casino',
+	},
+	{
 		name: 'Visar Dev Site',
 		code: 'VISAR',
 		icon: '\u{1F4BB}',
