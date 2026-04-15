@@ -415,6 +415,7 @@ case "$DEPLOY_TYPE" in
     node)
         # Atomic deploy: rsync to staging dir, install deps, then swap + restart
         ssh "$SERVER" "rm -rf $STAGING_PATH && { cp -a $SERVER_PATH $STAGING_PATH 2>/dev/null || mkdir -p $STAGING_PATH; }" 2>>"$LOG_FILE"
+        ssh "$SERVER" "mkdir -p \"$STAGING_PATH/$(dirname "$BUILD_OUTPUT")\"" 2>>"$LOG_FILE"
         rsync -az --delete "$BUILD_DIR/$BUILD_OUTPUT/" "$SERVER:$STAGING_PATH/$BUILD_OUTPUT/" 2>>"$LOG_FILE"
         NODE_PKG_DIR="${NODE_PKG_DIRS[$PROJECT]:-}"
         if [[ -n "$NODE_PKG_DIR" ]]; then
