@@ -10,7 +10,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-WORKSPACE="/home/visar/Documents/wip/hetzner"
+WORKSPACE="/home/visar/Documents/work/hetzner"
 BUILD_BASE="/tmp/veron3-build"
 DEPLOY_STATE_DIR="$SCRIPT_DIR/.state"
 LOCKFILE_CACHE_DIR="$SCRIPT_DIR/.cache"

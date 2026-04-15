@@ -28,7 +28,7 @@ Open `deploy/deploy.sh` and add one entry to each config array in the `PROJECT C
 
 declare -A REPO_DIRS=(
     ...existing...
-    [myapp]="my-app-repo"            # directory name under /home/visar/Documents/wip/hetzner/
+    [myapp]="my-app-repo"            # directory name under /home/visar/Documents/work/hetzner/
 )
 
 declare -A SERVER_PATHS=(
@@ -132,11 +132,11 @@ The watcher will immediately detect the new project has no deployed SHA and depl
 
 ## Repos outside the workspace
 
-Some projects live outside the deploy workspace (`/home/visar/Documents/wip/hetzner/`). These need symlinks so the deploy script can find them. After cloning on a fresh machine, recreate these:
+Some projects live outside the deploy workspace (`/home/visar/Documents/work/hetzner/`). These need symlinks so the deploy script can find them. After cloning on a fresh machine, recreate these:
 
 ```bash
-ln -s /home/visar/Documents/trading-repos/trader-ui /home/visar/Documents/wip/hetzner/trader-ui
-ln -s /home/visar/Documents/trading-repos/trader-svelte /home/visar/Documents/wip/hetzner/trader-svelte
+ln -s /home/visar/Documents/work/trading/trader /home/visar/Documents/work/hetzner/trader-ui
+ln -s /home/visar/Documents/work/trading/trader-svelte /home/visar/Documents/work/hetzner/trader-svelte
 ```
 
 If a project's `REPO_DIRS` entry points to a directory that doesn't exist directly under the workspace, check whether it lives in another repo directory (e.g. `trading-repos/`, `manga-repos/`) and create a symlink.
