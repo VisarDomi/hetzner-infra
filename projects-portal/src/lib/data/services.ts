@@ -119,6 +119,16 @@ export const services: Service[] = [
 		section: 'live',
 	},
 	{
+		name: 'Tirana Tech',
+		code: 'TIRANATECH',
+		icon: '\u{1F4C5}',
+		description: 'Calendar of tech conferences, meetups and hackathons in Tirana, verified against organiser pages. Subscribable ICS feed for phone and desktop calendars.',
+		url: 'https://events.veron3.space',
+		domain: 'events.veron3.space',
+		status: 'live',
+		section: 'live',
+	},
+	{
 		name: 'Ordretten',
 		code: 'ORDRETTEN',
 		icon: '\u{1F1EB}\u{1F1F7}',
