@@ -109,6 +109,16 @@ export const services: Service[] = [
 		section: 'live',
 	},
 	{
+		name: 'Albania Outreach',
+		code: 'OUTREACH',
+		icon: '\u{1F1E6}\u{1F1F1}',
+		description: 'Outreach research on Albanian NGOs and agencies. Contacts, existing platforms, and pitch angles for paid software work.',
+		url: 'https://outreach.veron3.space',
+		domain: 'outreach.veron3.space',
+		status: 'live',
+		section: 'live',
+	},
+	{
 		name: 'Ordretten',
 		code: 'ORDRETTEN',
 		icon: '\u{1F1EB}\u{1F1F7}',
