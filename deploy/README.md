@@ -1,8 +1,10 @@
 # veron3 auto-deploy
 
-Push to `main` on any configured project → deployed to Hetzner within ~2 minutes.
+Push to `main` on any configured project → detected within ~1 minute, then built and deployed.
 
-Visar's local PC (z440) is the build server. `veron3-deploy.service` polls GitHub every 60s, builds from `origin/main` via `git archive` (never touches working tree), and deploys via rsync. `veron3-webhook.service` runs the local GitHub webhook receiver for immediate push-triggered deploys.
+Visar's local PC (z440) is the build server. `veron3-deploy.service` checks remote `main` SHAs every 60s with one batched GitHub GraphQL request for all unique repositories. It uses the existing `gh auth` login in memory, reuses HTTPS connections where possible, and blocks between checks. Unchanged projects run no Git fetches, builds, SSH deployment commands, or working-tree scans. If the API/login is unavailable, it falls back to `git ls-remote` once per unique repo and retries the API next cycle.
+
+Only projects with a remote SHA different from `deploy/.state/<project>.sha` invoke `deploy.sh`. That script fetches and builds from `origin/main` via `git archive` (never touches the working tree), and deploys via rsync or the existing local deploy adapter. Failed or busy deployments stay pending and retry on the next check; deleting a state file still forces a redeploy. The subdomain audit runs after an actual admin deployment, rather than on unchanged checks. `veron3-webhook.service` remains the immediate push path for configured webhooks.
 
 ## Quick reference
 
@@ -149,14 +151,17 @@ If a project's `REPO_DIRS` entry points to a directory that doesn't exist direct
        ▼
  GitHub (origin/main)
        │
-       │  git fetch (every 60s from Visar's PC)
+       │  one batched remote-head check (every 60s)
        ▼
  SHA changed? ──no──▶ skip
        │
       yes
        │
        ▼
- git archive origin/main ──▶ /tmp/veron3-build/<project>/
+ git fetch origin main, then git archive origin/main
+       │
+       ▼
+ /tmp/veron3-build/<project>/
        │
        ▼
  npm ci && npm run build
@@ -183,6 +188,10 @@ If a project's `REPO_DIRS` entry points to a directory that doesn't exist direct
 
 **Watcher not running**: `systemctl --user status veron3-deploy.service`. If dead, check `journalctl --user -u veron3-deploy.service -n 100`.
 
+**Git head fallback warning**: Check `gh auth status` for the service user. Git fallback preserves detection when API access is missing, but uses more CPU/network than the normal batched path. API reconnects, partial access failures, and refreshed login tokens are retried automatically. A successful normal cycle logs `Head check: N/N repos, 0 pending, 0 deployed` without a fallback warning.
+
 **Force redeploy**: Delete the state file and restart: `rm deploy/.state/<project>.sha && systemctl --user restart veron3-deploy.service`
 
 **PC rebooted**: The service auto-starts (linger enabled). It catches up on all missed deploys on the first cycle.
+
+**Watcher regression checks**: `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s deploy/tests -v`. These use temporary Git remotes and fake deployment handlers; they never deploy to real services.

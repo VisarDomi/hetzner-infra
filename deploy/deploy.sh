@@ -291,6 +291,17 @@ record_build() {
 
 # ---------- main ----------
 
+# Read-only configuration for the watcher. Keep repo paths and deploy state in
+# one place; this mode never fetches, builds, or takes a per-project deploy lock.
+if [[ "${1:-}" == "--watch-config" ]]; then
+    shift
+    for project in "$@"; do
+        [[ -n "${REPO_DIRS[$project]:-}" ]] || die "Unknown project: $project"
+        printf '%s\t%s\t%s\n' "$project" "$WORKSPACE/${REPO_DIRS[$project]}" "$DEPLOY_STATE_DIR/$project.sha"
+    done
+    exit 0
+fi
+
 PROJECT="${1:-}"
 ALL_PROJECTS=$(echo "${!REPO_DIRS[@]}" | tr ' ' '|')
 [[ -z "$PROJECT" ]] && die "Usage: $0 <$ALL_PROJECTS>"
