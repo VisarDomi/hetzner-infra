@@ -1,0 +1,1168 @@
+{
+  "before": [
+    {
+      "start_utc": "2026-10-21T11:21:46Z",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/veron3-deploy.service",
+      "before": {
+        "usage_usec": 17860179997,
+        "user_usec": 14449265831,
+        "system_usec": 3410914166,
+        "nice_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "process_samples": [
+        {
+          "offset_s": 0.00028338702395558357,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4019235,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 6.000892763026059,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4019235,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 12.001300574978814,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4019235,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 18.00201931898482,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4020249,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh lifevault "
+            },
+            {
+              "pid": 4020263,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/life-document-organizer fetch origin main "
+            },
+            {
+              "pid": 4020264,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'ErdalDomi/life-document-organizer.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 24.002485928009264,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4020385,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh ura "
+            },
+            {
+              "pid": 4020400,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/ura fetch origin main "
+            },
+            {
+              "pid": 4020401,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'ErdalDomi/ura.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 30.003466653986834,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4020500,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh visar "
+            },
+            {
+              "pid": 4020514,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/visar-dev-site fetch origin main "
+            },
+            {
+              "pid": 4020515,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/visar-dev-site.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 36.00422777701169,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4020984,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh cashback-deck "
+            },
+            {
+              "pid": 4020998,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/cashback fetch origin main "
+            },
+            {
+              "pid": 4020999,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/cashback.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 42.00547648803331,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021094,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh blog "
+            },
+            {
+              "pid": 4021108,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/blog fetch origin main "
+            },
+            {
+              "pid": 4021109,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/visar-blog.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 48.00680570304394,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021507,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh pm-graph "
+            },
+            {
+              "pid": 4021521,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/hetzner-infra fetch origin main "
+            },
+            {
+              "pid": 4021522,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/hetzner-infra.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 54.00762582302559,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 60.00822571199387,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 66.00856759003364,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 72.00894006201997,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 78.00940017402172,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 84.01002134697046,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 90.01049103599507,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 96.01293461804744,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 102.01351956801955,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 108.01395180798136,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4021675,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 114.01434434601106,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4022925,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh lifevault "
+            },
+            {
+              "pid": 4022939,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/life-document-organizer fetch origin main "
+            },
+            {
+              "pid": 4022940,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'ErdalDomi/life-document-organizer.git' "
+            }
+          ]
+        }
+      ],
+      "after": {
+        "usage_usec": 17865008282,
+        "user_usec": 14453156053,
+        "system_usec": 3411852228,
+        "nice_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "elapsed_s": 120.01480802800506,
+      "cpu_delta_usec": 4828285,
+      "cpu_one_logical_percent": 4.023074385015335
+    },
+    {
+      "start_utc": "2026-10-21T11:25:45Z",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/veron3-deploy.service",
+      "before": {
+        "usage_usec": 17871748548,
+        "user_usec": 14458683884,
+        "system_usec": 3413064664,
+        "nice_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "process_samples": [
+        {
+          "offset_s": 0.00026142410933971405,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026736,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh pm-graph "
+            },
+            {
+              "pid": 4026753,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/hetzner-infra fetch origin main "
+            },
+            {
+              "pid": 4026754,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/hetzner-infra.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 6.000801617046818,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026923,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh events "
+            },
+            {
+              "pid": 4026937,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/tirana-events fetch origin main "
+            },
+            {
+              "pid": 4026938,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/tirana-events.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 12.001401514047757,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 18.001698652049527,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 24.002127349027433,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 30.002464050077833,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 36.00318358500954,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 42.00355068407953,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 48.004108424065635,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 54.004453027038835,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 60.005088749108836,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 66.00567882601172,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4026955,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 72.00619458709843,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4028130,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh ura "
+            },
+            {
+              "pid": 4028144,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/ura fetch origin main "
+            },
+            {
+              "pid": 4028145,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'ErdalDomi/ura.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 78.0067164010834,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4028231,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh tendies-showcase "
+            },
+            {
+              "pid": 4028245,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/position-opener fetch origin main "
+            },
+            {
+              "pid": 4028246,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/position-opener.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 84.0075225320179,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4028344,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh cashback-deck "
+            },
+            {
+              "pid": 4028358,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/cashback fetch origin main "
+            },
+            {
+              "pid": 4028359,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/cashback.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 90.00825979700312,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4028480,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh blog "
+            },
+            {
+              "pid": 4028494,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/blog fetch origin main "
+            },
+            {
+              "pid": 4028495,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/visar-blog.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 96.00887969008181,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4028706,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/deploy.sh pm-graph "
+            },
+            {
+              "pid": 4028720,
+              "cmd": "git -C /home/visar/Documents/work/hetzner/hetzner-infra fetch origin main "
+            },
+            {
+              "pid": 4028721,
+              "cmd": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'VisarDomi/hetzner-infra.git' "
+            }
+          ]
+        },
+        {
+          "offset_s": 102.00957141700201,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4029178,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 108.00998165109195,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4029178,
+              "cmd": "sleep 60 "
+            }
+          ]
+        },
+        {
+          "offset_s": 114.01041593507398,
+          "processes": [
+            {
+              "pid": 1594729,
+              "cmd": "bash /home/visar/Documents/work/hetzner/deploy/watcher.sh "
+            },
+            {
+              "pid": 4029178,
+              "cmd": "sleep 60 "
+            }
+          ]
+        }
+      ],
+      "after": {
+        "usage_usec": 17876416917,
+        "user_usec": 14462487238,
+        "system_usec": 3413929678,
+        "nice_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "elapsed_s": 120.0106972270878,
+      "cpu_delta_usec": 4668369,
+      "cpu_one_logical_percent": 3.889960735055454
+    }
+  ],
+  "before_journal_counts": {
+    "before-1": {
+      "git_fetch_checks": 24,
+      "already_deployed_skips": 17,
+      "actual_deploy_successes": 0,
+      "build_attempts": 0,
+      "failures": 0,
+      "subdomain_audits": 1
+    },
+    "before-2": {
+      "git_fetch_checks": 23,
+      "already_deployed_skips": 18,
+      "actual_deploy_successes": 0,
+      "build_attempts": 0,
+      "failures": 0,
+      "subdomain_audits": 1
+    }
+  },
+  "batch_preflight": {
+    "projects": 20,
+    "unique_repos": 14,
+    "resolved_heads": 14,
+    "pending": [],
+    "elapsed_s": 1.5777975450037047,
+    "warning": ""
+  },
+  "after": [
+    {
+      "start_utc": "2026-10-21T11:31:56Z",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/veron3-deploy.service",
+      "main_pid": 4035176,
+      "before": {
+        "usage_usec": 265825,
+        "user_usec": 208570,
+        "system_usec": 57254,
+        "nice_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "process_samples": [
+        {
+          "offset_s": 0.0002049109898507595,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 6.000564343994483,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 12.001187989953905,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 18.001741120009683,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 24.00205315090716,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 30.00233628996648,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 36.002628420013934,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 42.00298029393889,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 48.00353885698132,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 54.00383228098508,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 60.00440896092914,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 66.00472726894077,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 72.00530451501254,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 78.00582934601698,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 84.00636402494274,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 90.00672076095361,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 96.0072876639897,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 102.00768083392177,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 108.00803274393547,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 114.00834391394164,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        }
+      ],
+      "after": {
+        "usage_usec": 283457,
+        "user_usec": 223728,
+        "system_usec": 59728,
+        "nice_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "elapsed_s": 120.00866305397358,
+      "cpu_delta_usec": 17632,
+      "cpu_one_logical_percent": 0.014692272667074088
+    },
+    {
+      "start_utc": "2026-10-21T11:33:56Z",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/veron3-deploy.service",
+      "main_pid": 4035176,
+      "before": {
+        "usage_usec": 283457,
+        "user_usec": 223728,
+        "system_usec": 59728,
+        "nice_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "process_samples": [
+        {
+          "offset_s": 0.00013745995238423347,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 6.000853896024637,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 12.001160893007182,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 18.0016911419807,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 24.00206663494464,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 30.00241969304625,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 36.00296069600154,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 42.003307461040094,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 48.00385559897404,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 54.004387438995764,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 60.00493316503707,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 66.00548129796516,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 72.0061553849373,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 78.00648377998732,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 84.00718124094419,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 90.00770574796479,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 96.0082374199992,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 102.00874057796318,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 108.00915325398091,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        },
+        {
+          "offset_s": 114.00966157100629,
+          "processes": [
+            {
+              "pid": 4035176,
+              "cmd": "python3 -u /home/visar/Documents/work/hetzner/deploy/watcher.py --interval 60 lifevault ordretten roni ura trader-ui tendies tendies-showcase visar biomorph cashback cashback-deck cashback-deck-v2 cashback-v2 cashback-v3 blog admin pm-graph argus research-visar events "
+            }
+          ]
+        }
+      ],
+      "after": {
+        "usage_usec": 303355,
+        "user_usec": 242481,
+        "system_usec": 60873,
+        "nice_usec": 0,
+        "core_sched.force_idle_usec": 0,
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "elapsed_s": 120.0102100049844,
+      "cpu_delta_usec": 19898,
+      "cpu_one_logical_percent": 0.016580255962533166
+    }
+  ],
+  "generated_at_utc": "2026-10-21T11:37:21.365004+00:00",
+  "method": {
+    "counter": "cgroup v2 cpu.stat usage_usec",
+    "includes": "all service processes and child work, including subprocesses that exit between snapshots",
+    "cpu_percent_formula": "100 * delta_usage_usec / (elapsed_monotonic_seconds * 1000000)",
+    "normalization": "one logical CPU; 100% = one logical CPU saturated",
+    "process_snapshot_period_seconds": 6,
+    "window_seconds": 120,
+    "limits": "cpu.stat is exposed in microsecond units; process snapshots can miss short-lived processes but CPU deltas include their CPU. Idle windows exclude initial startup and actual builds. Values below 0.05% round to 0.0% at one decimal; they are not mathematical zero."
+  }
+}

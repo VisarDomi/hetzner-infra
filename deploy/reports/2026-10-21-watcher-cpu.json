@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-21T11:37:21.365004+00:00",
+  "result": "fixed_near_zero_idle",
+  "service": "user:veron3-deploy.service",
+  "source_repository": "/home/visar/Documents/work/hetzner/hetzner-infra",
+  "source_remote": "git@github.com:VisarDomi/hetzner-infra.git",
+  "implementation_commit": "042429bddf9bd783df0840f73b104eeff5efd77f",
+  "published": false,
+  "root_cause": {
+    "summary": "The old 60-second loop invoked deploy.sh for all 20 projects before checking whether anything changed. Each invocation did a Git/SSH fetch; 20 projects share 14 repos. It also ran a two-SSH subdomain audit on every unchanged admin check.",
+    "idle_evidence": "All 20 deployed SHAs matched live remote main heads; both before windows contained no builds, successful deployments, or failed builds. Sampled child processes included git fetch and ssh git-upload-pack.",
+    "before_journal_counts": {
+      "before-1": {
+        "git_fetch_checks": 24,
+        "already_deployed_skips": 17,
+        "actual_deploy_successes": 0,
+        "build_attempts": 0,
+        "failures": 0,
+        "subdomain_audits": 1
+      },
+      "before-2": {
+        "git_fetch_checks": 23,
+        "already_deployed_skips": 18,
+        "actual_deploy_successes": 0,
+        "build_attempts": 0,
+        "failures": 0,
+        "subdomain_audits": 1
+      }
+    },
+    "historical_audit": {
+      "path": "/home/visar/Documents/work/games/eb1-linux/reports/system/2026-10-21-after-project-cleanup.json",
+      "cpu_percent_one_logical": 9.20323601696644,
+      "changed": false,
+      "comparison_note": "Historical shorter (~35s) sample is retained. The new controlled before/after comparisons below use 120s unchanged-source windows; short samples can weight the active fetch phase differently."
+    }
+  },
+  "fix": {
+    "normal_path": "One authenticated GraphQL query for all unique GitHub repos per cycle. Persist the HTTP client and reconnect a stale connection before using Git fallback. No recurring Git/SSH/fetch/build processes while unchanged.",
+    "poll_interval_seconds": 60,
+    "unchanged_features": [
+      "Existing webhook service and deployment endpoints",
+      "deploy.sh fetch/archive/build/deploy path, including existing local adapter",
+      "Per-project flock coordination with webhooks",
+      "State-file based retry and forced redeploy by deleting a state file",
+      "systemd Restart=always and boot enablement"
+    ],
+    "recovery": "Missing API access/auth or non-GitHub repos use git ls-remote once per unique repo. Missing remote results do not deploy stale refs. Failed/busy deployments stay pending. Refreshed tokens, reconnects, and partial API access are retried.",
+    "subdomain_audit": "Run only after a successful admin state change.",
+    "shutdown": "Release the watcher lifetime flock and do not launch another pending deployment after stop is requested.",
+    "cpu_throttling_or_disable_used": false
+  },
+  "files_changed": [
+    {
+      "path": "/home/visar/Documents/work/hetzner/hetzner-infra/deploy/watcher.sh",
+      "change": "Keep the existing project list and interval; exec the Python metadata watcher.",
+      "sha256": "c1b20324795f1d56f2d15b022efd4330440c48149f0f8fcfe89382ba347cf79e"
+    },
+    {
+      "path": "/home/visar/Documents/work/hetzner/hetzner-infra/deploy/watcher.py",
+      "change": "One GraphQL head batch per 60-second cycle, blocking wait, SHA gating, grouped Git fallback, reconnects, watcher flock, and shutdown handling.",
+      "sha256": "283cdff8ff502b5a66f3f4c021d63ff5c54d3bc31125db3405e8f327f7fd1f56"
+    },
+    {
+      "path": "/home/visar/Documents/work/hetzner/hetzner-infra/deploy/deploy.sh",
+      "change": "Add --watch-config to expose repo/state paths; existing fetch/build/deploy path unchanged.",
+      "sha256": "d878ab4bc56d6270d9ea4ec66a9241d6f502bf1139915d8ba1ead35727b5d030"
+    },
+    {
+      "path": "/home/visar/Documents/work/hetzner/hetzner-infra/deploy/tests/test_watcher.py",
+      "change": "11 safe regression checks using temporary Git remotes and fake deploy handlers.",
+      "sha256": "b101bac32b7a588d0d30f88fdc26b5d661e0f6c46c0927078d0b1b6197e595c4"
+    },
+    {
+      "path": "/home/visar/Documents/work/hetzner/hetzner-infra/deploy/README.md",
+      "change": "Document normal checks, fallback, trigger behavior, and safe regression command.",
+      "sha256": "b18b5e626c68d0d5ce4a52efe807ae05afbc9ca4ea2e15f87fcb04abd5e56d53"
+    }
+  ],
+  "verification": {
+    "fixture_command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s deploy/tests -v",
+    "fixture_tests_passed": 11,
+    "checks": [
+      "Remote main push detected even with stale local origin/main; unchanged cycles start no fake deployments",
+      "Shared repo triggers all relevant fixture projects once",
+      "Failed build retries without acknowledging SHA",
+      "A deploy-lock skip is retried",
+      "Missing remote head never triggers from stale data",
+      "Deleting state forces redeploy; subdomain audit only follows an actual admin change",
+      "No Git commands on normal unchanged cycles after startup config discovery",
+      "API failure falls back and recovers; partial access uses Git only for unavailable repo",
+      "Expired HTTP keep-alive reconnects; unauthorized token is reloaded",
+      "Shutdown does not start the next pending build",
+      "A duplicate watcher exits without interfering with the running service"
+    ],
+    "live_head_checks": [
+      "[2026-10-21 13:31:26] Head check: 14/14 repos, 0 pending, 0 deployed",
+      "[2026-10-21 13:32:27] Head check: 14/14 repos, 0 pending, 0 deployed",
+      "[2026-10-21 13:33:28] Head check: 14/14 repos, 0 pending, 0 deployed",
+      "[2026-10-21 13:34:29] Head check: 14/14 repos, 0 pending, 0 deployed",
+      "[2026-10-21 13:35:31] Head check: 14/14 repos, 0 pending, 0 deployed",
+      "[2026-10-21 13:36:32] Head check: 14/14 repos, 0 pending, 0 deployed"
+    ],
+    "live_projects": 20,
+    "live_unique_repos": 14,
+    "actual_deployments_triggered_by_this_task": 0,
+    "shell_syntax_and_diff_checks": "passed"
+  },
+  "measurements": {
+    "method": {
+      "counter": "cgroup v2 cpu.stat usage_usec",
+      "includes": "all service processes and child work, including subprocesses that exit between snapshots",
+      "cpu_percent_formula": "100 * delta_usage_usec / (elapsed_monotonic_seconds * 1000000)",
+      "normalization": "one logical CPU; 100% = one logical CPU saturated",
+      "process_snapshot_period_seconds": 6,
+      "window_seconds": 120,
+      "limits": "cpu.stat is exposed in microsecond units; process snapshots can miss short-lived processes but CPU deltas include their CPU. Idle windows exclude initial startup and actual builds. Values below 0.05% round to 0.0% at one decimal; they are not mathematical zero."
+    },
+    "before": [
+      {
+        "start_utc": "2026-10-21T11:21:46Z",
+        "elapsed_s": 120.01480802800506,
+        "cpu_delta_usec": 4828285,
+        "cpu_one_logical_percent": 4.023074385015335
+      },
+      {
+        "start_utc": "2026-10-21T11:25:45Z",
+        "elapsed_s": 120.0106972270878,
+        "cpu_delta_usec": 4668369,
+        "cpu_one_logical_percent": 3.889960735055454
+      }
+    ],
+    "after": [
+      {
+        "start_utc": "2026-10-21T11:31:56Z",
+        "elapsed_s": 120.00866305397358,
+        "cpu_delta_usec": 17632,
+        "cpu_one_logical_percent": 0.014692272667074088
+      },
+      {
+        "start_utc": "2026-10-21T11:33:56Z",
+        "elapsed_s": 120.0102100049844,
+        "cpu_delta_usec": 19898,
+        "cpu_one_logical_percent": 0.016580255962533166
+      }
+    ],
+    "before_weighted_cpu_percent_one_logical": 3.956518699921995,
+    "after_weighted_cpu_percent_one_logical": 0.015636270398945325,
+    "reduction_percent": 99.60479725776973,
+    "workload": "Unchanged remote main/deployed SHAs; no real builds/deployments in either before or after windows. Each 120s window exceeds the former ~95s fetch-plus-sleep cycle and includes at least two new 60s head checks.",
+    "limits": [
+      "Near-zero is measured idle CPU, not mathematical zero. Both final intervals round to 0.0% at one decimal.",
+      "Cold startup, real builds, and Git fallback during API/auth failures consume CPU and are outside this normal idle comparison.",
+      "Process snapshots are descriptive; all CPU calculations use inclusive cgroup counters."
+    ]
+  },
+  "current_service": {
+    "Restart": "always",
+    "MainPID": "4035176",
+    "NRestarts": "0",
+    "ExecMainStartTimestamp": "Wed 2026-10-21 13:31:24 CEST",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/veron3-deploy.service",
+    "CPUUsageNSec": "312947000",
+    "ActiveState": "active",
+    "SubState": "running",
+    "enabled": "enabled",
+    "cpu_max": "max 100000",
+    "cpu_stat": {
+      "usage_usec": 312947,
+      "user_usec": 251168,
+      "system_usec": 61779,
+      "nice_usec": 0,
+      "core_sched.force_idle_usec": 0,
+      "nr_periods": 0,
+      "nr_throttled": 0,
+      "throttled_usec": 0,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    }
+  },
+  "preservation": {
+    "original_files_already_git_tracked": true,
+    "private_backup_directory": "/home/visar/.local/state/veron3-watcher-fix/20261021T112422Z",
+    "original_manifest": "/home/visar/.local/state/veron3-watcher-fix/20261021T112422Z/manifest.json",
+    "preexisting_local_changes": "Preserved exactly and left unstaged: README repo symlink example, project/repo config additions, local deploy adapter, watcher events entry, blog autopush and webhook edits. Only this task's implementation was committed.",
+    "unit_and_launcher": "Unchanged; restart only veron3-deploy.service twice to load implementation and final shutdown fix.",
+    "other_services_modified": [],
+    "secrets_committed": false
+  },
+  "rollback": {
+    "minimal_functional": "Inspect/merge any later watcher.sh edits, restore the preserved pre-fix deploy/watcher.sh, then restart only veron3-deploy.service. The extra deploy.sh config mode and unused Python file do not change the old normal deploy path.",
+    "restore_command": "cp -- /home/visar/.local/state/veron3-watcher-fix/20261021T112422Z/deploy/watcher.sh /home/visar/Documents/work/hetzner/hetzner-infra/deploy/watcher.sh",
+    "restart_command": "systemctl --user restart veron3-deploy.service",
+    "full_source_revert": "Implementation commit 042429bddf9bd783df0840f73b104eeff5efd77f contains only this task's source changes. Preserve the standing local diff before any full source revert."
+  },
+  "artifacts": {
+    "raw_samples": "/home/visar/Documents/work/hetzner/hetzner-infra/deploy/reports/2026-10-21-watcher-cpu-samples.json",
+    "test_log": "/home/visar/Documents/work/hetzner/hetzner-infra/deploy/reports/2026-10-21-watcher-tests.txt",
+    "report": "/home/visar/Documents/work/hetzner/hetzner-infra/deploy/reports/2026-10-21-watcher-cpu.json"
+  }
+}
