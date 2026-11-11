@@ -13,3 +13,4 @@ projects-portal/.svelte-kit/
 pm-graph/node_modules/
 pm-graph/build/
 pm-graph/.svelte-kit/
+__pycache__/

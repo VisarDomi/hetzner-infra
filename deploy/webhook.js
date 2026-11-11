@@ -33,7 +33,7 @@ const REPO_MAP = {
   'VisarDomi/roni-application-tracker': 'roni',
   'VisarDomi/ura': 'ura',
   'VisarDomi/trader-ui': 'trader-ui',
-  'VisarDomi/trader-svelte': ['tendies', 'tendies-showcase'],
+  'VisarDomi/position-opener': ['tendies', 'tendies-showcase'],
   'VisarDomi/visar-dev-site': 'visar',
   'VisarDomi/biomorph-website': 'biomorph',
   'VisarDomi/cashback': ['cashback', 'cashback-deck', 'cashback-biz', 'cashback-v2', 'cashback-v3'],
@@ -41,6 +41,7 @@ const REPO_MAP = {
   'VisarDomi/visar-job-search': 'research-visar',
   'VisarDomi/hetzner-infra': ['admin', 'pm-graph'],
   'ErdalDomi/argus': 'argus',
+  'VisarDomi/tirana-events': 'events',
   // 'ErdalDomi/life-document-organizer': 'lifevault',
   // etc.
 };

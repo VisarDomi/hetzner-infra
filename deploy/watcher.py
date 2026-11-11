@@ -64,6 +64,12 @@ class Project:
 
 
 def load_projects(script, names):
+    # CI-managed projects are dispatched by the local CI timer.
+    managed_file = Path.home() / ".local/share/hetzner-pc/config/ci-managed-projects.json"
+    managed = json.loads(managed_file.read_text()) if managed_file.exists() else []
+    if not isinstance(managed, list) or not all(isinstance(x, str) for x in managed):
+        raise RuntimeError("Invalid CI handoff configuration")
+    names = [name for name in names if name not in managed]
     config = capture([str(script), "--watch-config", *names])
     projects = []
     for row in config.splitlines():

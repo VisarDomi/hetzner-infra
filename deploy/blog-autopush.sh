@@ -5,7 +5,7 @@
 #
 set -euo pipefail
 
-BLOG_REPO="$HOME/Documents/work/applications/blog"
+BLOG_REPO="$HOME/Documents/archive/applications/blog"
 
 cd "$BLOG_REPO"
 

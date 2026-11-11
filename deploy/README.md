@@ -138,7 +138,7 @@ Some projects live outside the deploy workspace (`/home/visar/Documents/work/het
 
 ```bash
 ln -s /home/visar/Documents/work/trading/trader /home/visar/Documents/work/hetzner/trader-ui
-ln -s /home/visar/Documents/work/trading/trader-svelte /home/visar/Documents/work/hetzner/trader-svelte
+ln -s /home/visar/Documents/work/trading/position-opener /home/visar/Documents/work/hetzner/position-opener
 ```
 
 If a project's `REPO_DIRS` entry points to a directory that doesn't exist directly under the workspace, check whether it lives in another repo directory (e.g. `trading-repos/`, `manga-repos/`) and create a symlink.
