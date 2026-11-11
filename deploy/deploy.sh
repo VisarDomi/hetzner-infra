@@ -42,8 +42,8 @@ declare -A REPO_DIRS=(
     [ura]="ura"
 
     [trader-ui]="trader"
-    [tendies]="trader-svelte"
-    [tendies-showcase]="trader-svelte"
+    [tendies]="position-opener"
+    [tendies-showcase]="position-opener"
     [visar]="visar-dev-site"
     [biomorph]="biomorph-website"
     [cashback]="cashback"
@@ -57,6 +57,7 @@ declare -A REPO_DIRS=(
     [casino]="claude-casino"
     [argus]="citizen-app-albania"
     [research-visar]="visar-job-search"
+    [events]="tirana-events"
 
 )
 
@@ -82,6 +83,7 @@ declare -A SERVER_PATHS=(
     [casino]="/home/erdal/casino"
     [argus]="/home/erdal/argus"
     [research-visar]="/home/erdal/research-visar"
+    [events]="/home/erdal/events"
 
 )
 
@@ -107,6 +109,7 @@ declare -A DEPLOY_TYPES=(
     [casino]="python"
     [argus]="node"
     [research-visar]="static"
+    [events]="node"
 
 )
 
@@ -132,6 +135,7 @@ declare -A INSTALL_CMDS=(
     [casino]="true"
     [argus]="npm ci"
     [research-visar]="true"
+    [events]="npm ci"
 
 )
 
@@ -157,6 +161,7 @@ declare -A BUILD_CMDS=(
     [casino]="true"
     [argus]="npm run build"
     [research-visar]="cd reports && bash generate-index.sh"
+    [events]="npm run build"
 
 )
 
@@ -183,6 +188,7 @@ declare -A BUILD_OUTPUTS=(
     [casino]="."
     [argus]="build"
     [research-visar]="reports"
+    [events]="build"
 
 )
 
@@ -209,6 +215,7 @@ declare -A SERVICE_NAMES=(
     [casino]="casino"
     [argus]="argus"
     [research-visar]=""
+    [events]="tirana-events"
 
 )
 
@@ -235,6 +242,7 @@ declare -A ENV_FILES=(
     [casino]=""
     [argus]=".env"
     [research-visar]=""
+    [events]=""
 
 )
 
@@ -284,9 +292,15 @@ record_build() {
         --arg ts "$timestamp" \
         --argjson dur "$duration" \
         '{project:$p,status:$s,sha:$sha,message:$msg,timestamp:$ts,duration:$dur}')
+    if [[ -f "$HOME/.local/share/hetzner-pc/ACTIVE" ]]; then
+        # One history for both builders, on Hetzner (/home/erdal/builds-data/builds.jsonl): the
+        # record is spooled on the PC's disk and sent by veron3-webhook-drain (deduplicated).
+        python3 "$HOME/Documents/environment/services/hetzner-pc/deploy_webhook_drain.py" record "$json" || true
+    else
     ssh "$SERVER" "cat >> /home/erdal/builds/builds.jsonl" <<< "$json" 2>/dev/null || true
     # Trim to last 200 entries
     ssh "$SERVER" "tail -200 /home/erdal/builds/builds.jsonl > /tmp/builds-trim.jsonl && mv /tmp/builds-trim.jsonl /home/erdal/builds/builds.jsonl" 2>/dev/null || true
+    fi
 }
 
 # ---------- main ----------
@@ -317,6 +331,16 @@ SUBDIR="${REPO_SUBDIRS[$PROJECT]:-}"
 SHA_FILE="$DEPLOY_STATE_DIR/$PROJECT.sha"
 LOG_FILE="$LOG_DIR/$PROJECT.log"
 
+# CI-managed project handoff: no parallel legacy build or publication.
+CI_MANAGED_FILE="$HOME/.local/share/hetzner-pc/config/ci-managed-projects.json"
+if [[ -f "$CI_MANAGED_FILE" ]]; then
+    jq -e 'type == "array" and all(.[]; type == "string")' "$CI_MANAGED_FILE" >/dev/null || die "Invalid CI handoff configuration"
+    if jq -e --arg project "$PROJECT" 'index($project) != null' "$CI_MANAGED_FILE" >/dev/null; then
+        log "$PROJECT: managed by local checked releases on the PC — legacy deploy skipped" | tee -a "$LOG_FILE"
+        exit 0
+    fi
+fi
+
 # 0. Per-project lock — prevent simultaneous deploys of the same project
 DEPLOY_LOCK="/tmp/veron3-deploy-${PROJECT}.lock"
 exec 200>"$DEPLOY_LOCK"
@@ -334,6 +358,15 @@ LAST_SHA=$(cat "$SHA_FILE" 2>/dev/null || echo "none")
 
 if [[ "$REMOTE_SHA" == "$LAST_SHA" ]]; then
     log "$PROJECT: already at $REMOTE_SHA — skipping" | tee -a "$LOG_FILE"
+    exit 0
+fi
+
+# The Hetzner backup builder may have published this commit while the PC was off: adopt it
+# instead of building and publishing the same commit again (publication is fenced there too).
+if [[ -f "$HOME/.local/share/hetzner-pc/ACTIVE" ]] && \
+   python3 "$HOME/Documents/environment/services/hetzner-pc/deploy_webhook_drain.py" deployed "$PROJECT" "$REMOTE_SHA" 2>/dev/null; then
+    echo "$REMOTE_SHA" > "$SHA_FILE"
+    log "$PROJECT: $REMOTE_SHA is already live on Hetzner (backup builder) — skipping" | tee -a "$LOG_FILE"
     exit 0
 fi
 
@@ -422,6 +455,15 @@ log "Deploying to $SERVER:$SERVER_PATH..." | tee -a "$LOG_FILE"
 
 STAGING_PATH="${SERVER_PATH}.staging"
 
+if [[ -f "$HOME/.local/share/hetzner-pc/ACTIVE" ]]; then
+    python3 "$HOME/Documents/environment/services/hetzner-pc/deploy_payload.py" \
+        --kind "$DEPLOY_TYPE" --source "$BUILD_DIR" --output "$BUILD_OUTPUT" \
+        --destination "$SERVER_PATH" --service "$SERVICE" \
+        --node-package "${NODE_PKG_DIRS[$PROJECT]:-}" 2>>"$LOG_FILE" || {
+        record_build "failure" "$(($(date +%s) - BUILD_START))"
+        exit 1
+    }
+else
 case "$DEPLOY_TYPE" in
     node)
         # Atomic deploy: rsync to staging dir, install deps, then swap + restart
@@ -463,6 +505,8 @@ case "$DEPLOY_TYPE" in
         die "Unknown deploy type: $DEPLOY_TYPE"
         ;;
 esac
+
+fi
 
 # 8. Record deployed SHA and build result
 echo "$REMOTE_SHA" > "$SHA_FILE"

@@ -325,7 +325,7 @@ function renderCards(builds) {
       <div class="card-project">${escapeHtml(b.project)}</div>
       <span class="card-status ${b.status}">${b.status}</span>
       <div class="card-details">
-        <div><span class="sha">${escapeHtml(b.sha)}</span> &middot; ${formatDuration(b.duration)}</div>
+        <div><span class="sha">${escapeHtml(b.sha)}</span> &middot; ${formatDuration(b.duration)} &middot; ${escapeHtml(b.builder || 'pc')}</div>
         <div class="message">${escapeHtml(b.message)}</div>
         <div class="time">${relativeTime(b.timestamp)}</div>
       </div>
@@ -345,12 +345,13 @@ function renderHistory(builds) {
       <td><span class="sha">${escapeHtml(b.sha)}</span></td>
       <td class="msg" title="${escapeHtml(b.message)}">${escapeHtml(b.message)}</td>
       <td class="duration">${formatDuration(b.duration)}</td>
+      <td>${escapeHtml(b.builder || 'pc')}</td>
     </tr>`
   ).join('');
 
   return `<table class="history-table">
     <thead><tr>
-      <th>Time</th><th>Project</th><th>SHA</th><th>Message</th><th>Duration</th>
+      <th>Time</th><th>Project</th><th>SHA</th><th>Message</th><th>Duration</th><th>Builder</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
